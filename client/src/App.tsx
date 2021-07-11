@@ -1,7 +1,9 @@
+import Game from 'components/GameLayout/';
+
 function App() {
   return (
     <div className="App">
-      <div>Game Engine Loading...</div>
+      <Game />
     </div>
   );
 }
