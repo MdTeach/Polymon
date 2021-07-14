@@ -1,7 +1,7 @@
 .container {
   background-color: #000000;
-  width: 500px;
-  height: 500px;
+  /* width: 500px;
+  height: 500px; */
   position: relative;
   text-align: center;
 }

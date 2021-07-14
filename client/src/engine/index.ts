@@ -15,14 +15,13 @@ class Engine {
     window.requestAnimationFrame(() => {
       this.update();
     });
-    console.log('game loop');
   }
 
-  start(loop = false) {
-    const ctx = this.ctx;
+  start(loop = true) {
     // game setup
 
     // game loop
+    if (loop) this.update();
   }
 }
 

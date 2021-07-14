@@ -13,6 +13,7 @@ const GameLayout = () => {
         if (ctx !== null) {
           gameEngine.current = new GameEngine(ctx);
           gameEngine.current.start(false);
+          // gameEngine.current.start();
         }
       }
     })();
