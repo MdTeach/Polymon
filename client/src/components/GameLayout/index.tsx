@@ -12,8 +12,8 @@ const GameLayout = () => {
         const ctx = canvasRef.current.getContext('2d');
         if (ctx !== null) {
           gameEngine.current = new GameEngine(ctx);
-          gameEngine.current.start(false);
-          // gameEngine.current.start();
+          // gameEngine.current.start(false);
+          gameEngine.current.start();
         }
       }
     })();
