@@ -1,10 +1,14 @@
-import getPlayer, {Player} from './player/player';
+import getPlayer, {Player} from 'engine/player/player';
+import {Camera} from 'engine/camera/camera';
+
+import EngineConfig from './engine_config';
 
 class Engine {
   ctx: CanvasRenderingContext2D;
   height: number;
   width: number;
   player: Player;
+  camera: Camera;
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx;
@@ -12,6 +16,7 @@ class Engine {
     this.height = document.documentElement.clientHeight;
     this.width = document.documentElement.clientWidth;
     this.player = new Player();
+    this.camera = new Camera(ctx, 10, 8, 2);
   }
 
   update() {
