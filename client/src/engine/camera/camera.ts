@@ -1,5 +1,6 @@
 import {Map} from 'engine/maps/Map';
 import {CameraConfig} from 'types/EngineConifig';
+import GameObject from 'engine/utils/GameObject';
 
 class Camera {
   ctx: CanvasRenderingContext2D;
@@ -25,8 +26,8 @@ class Camera {
     const startRow = this.y;
     const endRow = startRow + height;
 
-    console.log('Start col,endclol', startCol, endCol);
-    console.log('Start row,endrow', startRow, endRow);
+    // console.log('Start col,endclol', startCol, endCol);
+    // console.log('Start row,endrow', startRow, endRow);
 
     var d: number[] = [];
     for (let c = startCol; c < endCol; c++) {
@@ -52,6 +53,23 @@ class Camera {
     }
     console.log('tiles d', d);
     console.log('num tiles', d.length);
+  }
+
+  renderObject(obj: GameObject) {
+    const tsize = obj.tsize;
+    const scaledValue = tsize * this.config.scaleF;
+
+    this.ctx.drawImage(
+      obj.sprite,
+      tsize * 0,
+      tsize * 0,
+      tsize,
+      tsize,
+      obj.position.x * scaledValue,
+      obj.position.y * scaledValue,
+      scaledValue,
+      scaledValue,
+    );
   }
 }
 

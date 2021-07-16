@@ -1,4 +1,4 @@
-import GameEngine from 'engine';
+import GameEngine from 'engine/engine';
 import {useRef, useLayoutEffect} from 'react';
 import './style.css';
 

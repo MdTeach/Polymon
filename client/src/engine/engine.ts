@@ -1,6 +1,7 @@
 import {Camera} from 'engine/camera/camera';
 
 import getPlayer, {Player} from 'engine/player/player';
+import PlayerSprite from 'assets/player/player.png';
 import {Map, loadMap} from 'engine/maps/Map';
 import CrystalTileData from 'engine/maps/tiled_data/crystal_base';
 import CrystalTileSprite from 'assets/tilemaps/crystal_min.png';
@@ -25,8 +26,6 @@ class Engine {
   }
 
   update() {
-    console.log('loop');
-
     window.requestAnimationFrame(() => {
       this.update();
     });
@@ -37,37 +36,14 @@ class Engine {
     this.ctx.canvas.width = width;
     this.ctx.imageSmoothingEnabled = false;
 
-    let sprite_size = 16;
-    let scale_f = 3 * sprite_size;
-    let player = {
-      x: 1,
-      y: 1,
-    };
-    // console.log(`place ${tile} to ${tileX},${tileY}`);
-    // console.log(`place ${tile} to ${c - startCol},${r - startRow}`);
-
     if (this.baseMap) {
       this.camera.renderMap(this.baseMap);
+      this.camera.renderObject(this.player);
     }
-
-    // this.camera.renderMap(
-    // render player
-    // const ctx = this.ctx;
-    // ctx.drawImage(
-    //   this.player.playerImg,
-    //   16 * 2,
-    //   0,
-    //   sprite_size,
-    //   sprite_size,
-    //   player.x * scale_f,
-    //   player.y * scale_f,
-    //   scale_f,
-    //   scale_f,
-    // );
   }
 
   async start(loop = true) {
-    this.player = await getPlayer({x: 0, y: 0});
+    this.player = await getPlayer({x: 0, y: 0}, PlayerSprite);
     console.log('playerLoaded');
     this.baseMap = await loadMap(CrystalTileSprite, CrystalTileData);
     console.log('map loaded');
@@ -83,6 +59,9 @@ class Engine {
     if (this.baseMap) {
       this.camera.renderMap(this.baseMap);
     }
+
+    // player render
+    this.camera.renderObject(this.player);
     // if (loop) this.update();
   }
 }
