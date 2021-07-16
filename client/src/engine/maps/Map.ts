@@ -1,26 +1,42 @@
+import {TileData} from 'types/TiledData';
+
 class Map {
-  tiles: number[];
-  rows: number;
-  cols: number;
-  tsize: number;
+  tileData: TileData;
   tileSheet: HTMLImageElement;
 
-  constructor(
-    tileSheet: HTMLImageElement,
-    tiles: number[],
-    rows: number,
-    cols: number,
-    tsize: number = 16,
-  ) {
-    this.tileSheet = tileSheet;
-    this.tiles = tiles;
-    this.rows = rows;
-    this.cols = cols;
-    this.tsize = tsize;
+  constructor(tileSheetSrc: string, tileData: TileData) {
+    this.tileSheet = new Image();
+    this.tileSheet.src = tileSheetSrc;
+    this.tileData = tileData;
+  }
+
+  loadImage() {
+    return new Promise((resolve, reject) => {
+      try {
+        this.tileSheet.onload = () => {
+          resolve(true);
+        };
+      } catch (e) {
+        reject(e);
+      }
+    });
   }
 
   getTile(col: number, row: number) {
-    return this.tiles[row * this.cols + col];
+    return this.tileData.tiles[row * this.tileData.cols + col];
+  }
+
+  getTileLocation(tile: number) {
+    let tilemapX = (tile - 1) % this.tileData.tileMapCols;
+    let tilemapY = Math.floor((tile - 1) / this.tileData.tileMapCols);
+    return [tilemapX, tilemapY];
   }
 }
-export {Map};
+
+const loadMap = async (tileSheetSrc: string, tileData: TileData) => {
+  const map = new Map(tileSheetSrc, tileData);
+  await map.loadImage();
+  return map;
+};
+
+export {Map, loadMap};

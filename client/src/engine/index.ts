@@ -1,7 +1,11 @@
-import getPlayer, {Player} from 'engine/player/player';
 import {Camera} from 'engine/camera/camera';
 
-import EngineConfig from './engine_config';
+import getPlayer, {Player} from 'engine/player/player';
+import {Map, loadMap} from 'engine/maps/Map';
+import CrystalTileData from 'engine/maps/tiled_data/crystal_base';
+import CrystalTileSprite from 'assets/tilemaps/crystal_min.png';
+
+import engineConfig from './engine_config';
 
 class Engine {
   ctx: CanvasRenderingContext2D;
@@ -9,6 +13,7 @@ class Engine {
   width: number;
   player: Player;
   camera: Camera;
+  baseMap: Map | undefined;
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx;
@@ -16,10 +21,12 @@ class Engine {
     this.height = document.documentElement.clientHeight;
     this.width = document.documentElement.clientWidth;
     this.player = new Player();
-    this.camera = new Camera(ctx, 10, 8, 2);
+    this.camera = new Camera(ctx, engineConfig.camera);
   }
 
   update() {
+    console.log('loop');
+
     window.requestAnimationFrame(() => {
       this.update();
     });
@@ -36,25 +43,47 @@ class Engine {
       x: 1,
       y: 1,
     };
+    // console.log(`place ${tile} to ${tileX},${tileY}`);
+    // console.log(`place ${tile} to ${c - startCol},${r - startRow}`);
 
-    this.ctx.drawImage(
-      this.player.playerImg,
-      16 * 2,
-      0,
-      sprite_size,
-      sprite_size,
-      player.x * scale_f,
-      player.y * scale_f,
-      scale_f,
-      scale_f,
-    );
+    if (this.baseMap) {
+      this.camera.renderMap(this.baseMap);
+    }
+
+    // this.camera.renderMap(
+    // render player
+    // const ctx = this.ctx;
+    // ctx.drawImage(
+    //   this.player.playerImg,
+    //   16 * 2,
+    //   0,
+    //   sprite_size,
+    //   sprite_size,
+    //   player.x * scale_f,
+    //   player.y * scale_f,
+    //   scale_f,
+    //   scale_f,
+    // );
   }
 
   async start(loop = true) {
     this.player = await getPlayer({x: 0, y: 0});
     console.log('playerLoaded');
+    this.baseMap = await loadMap(CrystalTileSprite, CrystalTileData);
+    console.log('map loaded');
 
-    if (loop) this.update();
+    // inital rendering
+    var height = document.documentElement.clientHeight;
+    var width = document.documentElement.clientWidth;
+    this.ctx.canvas.height = height;
+    this.ctx.canvas.width = width;
+    this.ctx.imageSmoothingEnabled = false;
+
+    // render map
+    if (this.baseMap) {
+      this.camera.renderMap(this.baseMap);
+    }
+    // if (loop) this.update();
   }
 }
 

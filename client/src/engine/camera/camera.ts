@@ -14,31 +14,44 @@ class Camera {
 
   renderMap(map: Map) {
     const {width, height, scaleF} = this.config;
-    const maxX = map.cols * map.tsize - width;
-    const maxY = map.rows * map.tsize - height;
+    const {rows, cols, tsize} = map.tileData;
+    const scaledValue = tsize * scaleF;
+    // const maxX = cols * tsize - width;
+    // const maxY = rows * tsize - height;
 
-    var startCol = Math.floor(this.x / map.tsize);
-    var endCol = startCol + width / map.tsize;
-    var startRow = Math.floor(this.y / map.tsize);
-    var endRow = startRow + height / map.tsize;
+    const startCol = this.x;
+    const endCol = startCol + width;
 
-    // rendering...
-    for (var c = startCol; c < endCol; c++) {
+    const startRow = this.y;
+    const endRow = startRow + height;
+
+    console.log('Start col,endclol', startCol, endCol);
+    console.log('Start row,endrow', startRow, endRow);
+
+    var d: number[] = [];
+    for (let c = startCol; c < endCol; c++) {
       for (let r = startRow; r < endRow; r++) {
-        var tile = map.getTile(c, r);
+        const tile = map.getTile(c, r);
+        d.push(tile);
+        const [tileX, tileY] = map.getTileLocation(tile);
+        // console.log(`place ${tile} to ${tileX},${tileY}`);
+        // console.log(`place ${tile} to ${c - startCol},${r - startRow}`);
+
         this.ctx.drawImage(
           map.tileSheet,
-          tile,
-          0, // tileY,
-          map.tsize,
-          map.tsize,
-          (c - startCol) * scaleF,
-          (r - startRow) * scaleF,
-          scaleF,
-          scaleF,
+          tileX * tsize,
+          tileY * tsize,
+          tsize,
+          tsize,
+          (c - startCol) * scaledValue,
+          (r - startRow) * scaledValue,
+          scaledValue,
+          scaledValue,
         );
       }
     }
+    console.log('tiles d', d);
+    console.log('num tiles', d.length);
   }
 }
 
