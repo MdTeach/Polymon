@@ -1,4 +1,4 @@
-import {EngineConfig, CameraConfig} from 'types/EngineConifig';
+import {EngineConfig} from 'types/EngineConifig';
 
 const Engine: EngineConfig = {
   camera: {

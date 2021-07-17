@@ -88,8 +88,12 @@ class Player extends GameObject {
       });
 
       if (!isCollided) {
+        // move player
         this.position.x = newPos.x;
         this.position.y = newPos.y;
+
+        // move camera
+        this.engineRef.camera?.follow(this);
       }
     }
   }

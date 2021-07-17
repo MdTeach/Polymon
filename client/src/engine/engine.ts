@@ -13,7 +13,7 @@ class Engine {
   ctx: CanvasRenderingContext2D;
   height: number;
   width: number;
-  camera: Camera;
+  camera: Camera | undefined;
   player: Player | undefined;
   baseMap: Map | undefined;
 
@@ -22,12 +22,14 @@ class Engine {
     this.ctx.imageSmoothingEnabled = false;
     this.height = document.documentElement.clientHeight;
     this.width = document.documentElement.clientWidth;
-    this.camera = new Camera(ctx, engineConfig.camera);
-    this.baseMap = new Map('', CrystalTileData);
   }
 
   checkMapCollider(pos: Position) {
     if (!this.baseMap) throw new Error('Basemap not inited');
+    if (!this.camera) throw new Error('Camera not inited');
+
+    pos.x += this.camera.x;
+    pos.y += this.camera.y;
     const nextTile = this.baseMap.getTile(pos.x, pos.y);
 
     if (this.baseMap.tileData.colliders.indexOf(nextTile) > -1) return true;
@@ -37,6 +39,7 @@ class Engine {
   update() {
     if (!this.player) throw new Error('Player not inited');
     if (!this.baseMap) throw new Error('Basemap not inited');
+    if (!this.camera) throw new Error('Camera not inited');
 
     window.requestAnimationFrame(() => {
       this.update();
@@ -47,18 +50,27 @@ class Engine {
     this.ctx.canvas.height = height;
     this.ctx.canvas.width = width;
     this.ctx.imageSmoothingEnabled = false;
-    this.camera.renderMap(this.baseMap);
 
+    this.camera.renderMap(this.baseMap);
     this.camera.renderObject(this.player);
   }
 
   async start(loop = true) {
     this.player = await getPlayer(this, {x: 0, y: 0}, PlayerSprite);
-    console.log('playerLoaded');
     this.baseMap = await loadMap(CrystalTileSprite, CrystalTileData);
+    this.camera = new Camera(this.ctx, engineConfig.camera, this.baseMap);
+    console.log('playerLoaded');
     console.log('map loaded');
 
-    this.player.position = {x: 3, y: 3};
+    this.player.position = {
+      x: this.camera.config.width / 2,
+      y: this.camera.config.height / 2,
+    };
+
+    this.camera.x = this.player.position.x - this.camera.config.width / 2;
+    this.camera.y = this.player.position.y - this.camera.config.height / 2;
+
+    console.log(this.player.position);
 
     // inital rendering
     var height = document.documentElement.clientHeight;
