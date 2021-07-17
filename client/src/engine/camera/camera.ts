@@ -57,7 +57,6 @@ class Camera {
     const tsize = obj.tsize;
     const scaledValue = tsize * this.config.scaleF;
     const [spriteX, spriteY] = obj.getSpriteLocation();
-    console.log(obj.position);
 
     this.ctx.drawImage(
       obj.sprite,
