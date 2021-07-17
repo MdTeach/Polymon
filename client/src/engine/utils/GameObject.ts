@@ -3,7 +3,7 @@ interface Position {
   y: number;
 }
 
-class GameObject {
+abstract class GameObject {
   sprite: HTMLImageElement;
   position: Position;
   tsize: number;
@@ -14,6 +14,8 @@ class GameObject {
     this.position = pos;
     this.tsize = tsize;
   }
+
+  abstract getSpriteLocation(): [number, number];
 
   getPosition(): Position {
     return this.position;

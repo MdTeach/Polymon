@@ -51,18 +51,18 @@ class Camera {
         );
       }
     }
-    console.log('tiles d', d);
-    console.log('num tiles', d.length);
   }
 
   renderObject(obj: GameObject) {
     const tsize = obj.tsize;
     const scaledValue = tsize * this.config.scaleF;
+    const [spriteX, spriteY] = obj.getSpriteLocation();
+    console.log(obj.position);
 
     this.ctx.drawImage(
       obj.sprite,
-      tsize * 0,
-      tsize * 0,
+      tsize * spriteX,
+      tsize * spriteY,
       tsize,
       tsize,
       obj.position.x * scaledValue,

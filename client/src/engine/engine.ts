@@ -23,6 +23,10 @@ class Engine {
     this.width = document.documentElement.clientWidth;
     this.player = new Player();
     this.camera = new Camera(ctx, engineConfig.camera);
+
+    // document.addEventListener('keydown', (e) => {
+    //   console.log(e.key);
+    // });
   }
 
   update() {
@@ -48,6 +52,8 @@ class Engine {
     this.baseMap = await loadMap(CrystalTileSprite, CrystalTileData);
     console.log('map loaded');
 
+    this.player.position = {x: 3, y: 3};
+
     // inital rendering
     var height = document.documentElement.clientHeight;
     var width = document.documentElement.clientWidth;
@@ -62,7 +68,7 @@ class Engine {
 
     // player render
     this.camera.renderObject(this.player);
-    // if (loop) this.update();
+    if (loop) this.update();
   }
 }
 
