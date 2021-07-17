@@ -5,6 +5,7 @@ interface TileData {
   tsize: number;
   tileMapCols: number;
   tileMapRows: number;
+  colliders: number[];
 }
 
 export {TileData};

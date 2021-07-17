@@ -19,6 +19,7 @@ const CrystalBase: TileData = {
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
     3, 3, 3, 3, 3, 3,
   ],
+  colliders: [2, 3, 7],
 };
 
 export default CrystalBase;

@@ -1,3 +1,6 @@
+import {throws} from 'assert';
+import Engine from 'engine/engine';
+
 interface Position {
   x: number;
   y: number;
@@ -7,12 +10,19 @@ abstract class GameObject {
   sprite: HTMLImageElement;
   position: Position;
   tsize: number;
+  engineRef: Engine;
 
-  constructor(pos: Position = {x: 0, y: 0}, imageSrc: string, tsize = 16) {
+  constructor(
+    engineRef: Engine,
+    pos: Position = {x: 0, y: 0},
+    imageSrc: string,
+    tsize = 16,
+  ) {
     this.sprite = new Image();
     this.sprite.src = imageSrc;
     this.position = pos;
     this.tsize = tsize;
+    this.engineRef = engineRef;
   }
 
   abstract getSpriteLocation(): [number, number];
