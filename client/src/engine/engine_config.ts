@@ -3,8 +3,8 @@ import {EngineConfig} from 'types/EngineConifig';
 const Engine: EngineConfig = {
   camera: {
     width: 12,
-    height: 8,
-    scaleF: 3.5,
+    height: 10,
+    scaleF: 4,
   },
 };
 export default Engine;

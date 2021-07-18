@@ -25,25 +25,24 @@ class Camera {
 
   renderMap(map: Map) {
     const {width, height, scaleF} = this.config;
-    const {rows, cols, tsize} = map.tileData;
+    const {tsize} = map.tileData;
     const scaledValue = tsize * scaleF;
-    // const maxX = cols * tsize - width;
-    // const maxY = rows * tsize - height;
 
-    const startCol = this.x;
+    const startCol = Math.floor(this.x);
     const endCol = startCol + width;
 
-    const startRow = this.y;
+    const startRow = Math.floor(this.y);
     const endRow = startRow + height;
 
-    // console.log('Start col,endclol', startCol, endCol);
-    // console.log('Start row,endrow', startRow, endRow);
+    const offsetX = -this.x + startCol;
+    const offsetY = -this.y + startRow;
 
-    var d: number[] = [];
+    console.log('Start col,endclol', startCol, endCol);
+    console.log('Start row,endrow', startRow, endRow);
+
     for (let c = startCol; c < endCol; c++) {
       for (let r = startRow; r < endRow; r++) {
         const tile = map.getTile(c, r);
-        d.push(tile);
         const [tileX, tileY] = map.getTileLocation(tile);
         // console.log(`place ${tile} to ${tileX},${tileY}`);
         // console.log(`place ${tile} to ${c - startCol},${r - startRow}`);
@@ -54,13 +53,20 @@ class Camera {
           tileY * tsize,
           tsize,
           tsize,
-          (c - startCol) * scaledValue,
-          (r - startRow) * scaledValue,
+          Math.round((c - startCol + offsetX) * scaledValue),
+          Math.round((r - startRow + offsetY) * scaledValue),
           scaledValue,
           scaledValue,
         );
       }
     }
+
+    // this.ctx.strokeRect(
+    //   this.x * scaledValue,
+    //   this.y * scaledValue,
+    //   width * scaledValue,
+    //   height * scaledValue,
+    // );
   }
 
   renderObject(obj: GameObject) {
@@ -74,8 +80,8 @@ class Camera {
       tsize * spriteY,
       tsize,
       tsize,
-      obj.position.x * scaledValue,
-      obj.position.y * scaledValue,
+      (obj.position.x - this.x) * scaledValue,
+      (obj.position.y - this.y) * scaledValue,
       scaledValue,
       scaledValue,
     );

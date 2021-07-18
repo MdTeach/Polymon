@@ -12,13 +12,24 @@ class Player extends GameObject {
     RIGHT: 2,
     UP: 6,
     DOWN: 0,
-    LEFT_ANI: [4, 4, 4, 4, 5, 5, 5, 5],
-    RIGHT_ANI: [2, 2, 2, 3, 3, 3],
-    UP_ANI: [6, 6, 6, 7, 7, 7],
-    DOWN_ANI: [0, 0, 0, 1, 1, 1],
+    LEFT_ANI: [4, 5],
+    RIGHT_ANI: [2, 3],
+    UP_ANI: [6, 7],
+    DOWN_ANI: [0, 1],
   };
 
   private animationCounter = 0;
+  private animationFrameLimit = 10;
+  private animationIndex = 0;
+  private isMoving = false;
+
+  private movement = {
+    LEFT: 'a',
+    RIGHT: 'd',
+    UP: 'w',
+    DOWN: 's',
+    SPEED: 2,
+  };
   playerHead: String;
 
   constructor(
@@ -28,10 +39,100 @@ class Player extends GameObject {
   ) {
     super(engine, pos, imageSrc);
     this.playerHead = 'LEFT';
+  }
 
-    document.addEventListener('keydown', (e) => {
-      this.handleMove(e.key);
-    });
+  getSpriteLocation(): [number, number] {
+    let dir = 0;
+    switch (this.playerHead) {
+      case 'LEFT':
+        dir = this.playerDirections.LEFT_ANI[this.animationIndex];
+        break;
+      case 'RIGHT':
+        dir = this.playerDirections.RIGHT_ANI[this.animationIndex];
+        break;
+      case 'UP':
+        dir = this.playerDirections.UP_ANI[this.animationIndex];
+        break;
+      case 'DOWN':
+        dir = this.playerDirections.DOWN_ANI[this.animationIndex];
+        break;
+    }
+    return [dir, 0];
+  }
+
+  update() {
+    // handle movement
+    const input = this.engineRef.input;
+    let dirX = 0;
+    let dirY = 0;
+
+    this.isMoving = false;
+    let pressed = true;
+    if (input._isDown(this.movement.LEFT)) {
+      if (this.playerHead === 'LEFT') {
+        dirX = -1;
+      } else {
+        this.playerHead = 'LEFT';
+      }
+    } else if (input._isDown(this.movement.RIGHT)) {
+      if (this.playerHead === 'RIGHT') {
+        dirX = 1;
+      } else {
+        this.playerHead = 'RIGHT';
+        this.animationIndex = 0;
+      }
+    } else if (input._isDown(this.movement.UP)) {
+      if (this.playerHead === 'UP') {
+        dirY = -1;
+      } else {
+        this.playerHead = 'UP';
+        this.animationIndex = 0;
+      }
+    } else if (input._isDown(this.movement.DOWN)) {
+      if (this.playerHead === 'DOWN') {
+        dirY = 1;
+      } else {
+        this.playerHead = 'DOWN';
+        this.animationIndex = 0;
+      }
+    } else {
+      pressed = false;
+    }
+
+    if (pressed) {
+      this.isMoving = true;
+      this.animationCounter += 1;
+      if (this.animationCounter >= this.animationFrameLimit) {
+        this.animationCounter = 0;
+        this.animationIndex = (this.animationIndex + 1) % 2;
+      }
+    }
+
+    if (!this.isMoving) {
+      this.animationCounter = 0;
+      this.animationIndex = 0;
+    }
+
+    this.move(dirX, dirY);
+  }
+
+  move(dirX: number, dirY: number) {
+    // calc next postion
+    const deltaTime = this.engineRef.time.delta;
+    const moveFactor = this.movement.SPEED * deltaTime;
+    let newPos = {
+      x: this.position.x + dirX * moveFactor,
+      y: this.position.y + dirY * moveFactor,
+    };
+
+    // check for collision
+    // const isCollided = this.engineRef.checkMapCollider({
+    //   x: Math.floor(newPos.x),
+    //   y: Math.floor(newPos.y),
+    // });
+
+    // if no collision, move
+    this.position = newPos;
   }
 
   handleMove(direction: string) {
@@ -96,25 +197,6 @@ class Player extends GameObject {
         this.engineRef.camera?.follow(this);
       }
     }
-  }
-
-  getSpriteLocation(): [number, number] {
-    let dir = 0;
-    switch (this.playerHead) {
-      case 'LEFT':
-        dir = this.playerDirections.LEFT_ANI[this.animationCounter];
-        break;
-      case 'RIGHT':
-        dir = this.playerDirections.RIGHT_ANI[this.animationCounter];
-        break;
-      case 'UP':
-        dir = this.playerDirections.UP_ANI[this.animationCounter];
-        break;
-      case 'DOWN':
-        dir = this.playerDirections.DOWN_ANI[this.animationCounter];
-        break;
-    }
-    return [dir, 0];
   }
 }
 
