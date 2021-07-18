@@ -17,6 +17,14 @@ class Engine {
   player: Player | undefined;
   baseMap: Map | undefined;
 
+  time = {
+    now: 10,
+    lastFrame: 0,
+    delta: 0,
+    lastFPS: 0,
+    fps: () => Math.floor((1 / this.time.delta) * 1000),
+  };
+
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx;
     this.ctx.imageSmoothingEnabled = false;
@@ -41,6 +49,12 @@ class Engine {
     if (!this.baseMap) throw new Error('Basemap not inited');
     if (!this.camera) throw new Error('Camera not inited');
 
+    // time clock
+    const currentTime = window.performance.now();
+    this.time.delta = currentTime - this.time.lastFrame;
+    this.time.lastFrame = currentTime;
+    console.log('fps', this.time.fps());
+
     window.requestAnimationFrame(() => {
       this.update();
     });
@@ -53,6 +67,15 @@ class Engine {
 
     this.camera.renderMap(this.baseMap);
     this.camera.renderObject(this.player);
+
+    // render text
+    let ctx = this.ctx;
+    ctx.font = 'bold 50px serif';
+    ctx.fillStyle = '#008000';
+    if (Math.floor(window.performance.now()) % 5 === 0) {
+      this.time.lastFPS = this.time.fps();
+    }
+    ctx.fillText(`FPS ${this.time.lastFPS}`, 200, 500);
   }
 
   async start(loop = true) {
@@ -84,8 +107,6 @@ class Engine {
 
     // player render
     this.camera.renderObject(this.player);
-
-    if (loop) this.update();
   }
 }
 
