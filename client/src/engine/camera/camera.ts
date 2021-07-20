@@ -37,15 +37,15 @@ class Camera {
     const offsetX = -this.x + startCol;
     const offsetY = -this.y + startRow;
 
-    console.log('Start col,endclol', startCol, endCol);
-    console.log('Start row,endrow', startRow, endRow);
-
     for (let c = startCol; c < endCol; c++) {
       for (let r = startRow; r < endRow; r++) {
         const tile = map.getTile(c, r);
         const [tileX, tileY] = map.getTileLocation(tile);
         // console.log(`place ${tile} to ${tileX},${tileY}`);
         // console.log(`place ${tile} to ${c - startCol},${r - startRow}`);
+        // if (tile === 7) {
+        //   console.log(c, r);
+        // }
 
         this.ctx.drawImage(
           map.tileSheet,
@@ -53,8 +53,8 @@ class Camera {
           tileY * tsize,
           tsize,
           tsize,
-          Math.round((c - startCol + offsetX) * scaledValue),
-          Math.round((r - startRow + offsetY) * scaledValue),
+          (c - startCol + offsetX) * scaledValue,
+          (r - startRow + offsetY) * scaledValue,
           scaledValue,
           scaledValue,
         );
@@ -74,6 +74,7 @@ class Camera {
     const scaledValue = tsize * this.config.scaleF;
     const [spriteX, spriteY] = obj.getSpriteLocation();
 
+    // console.log('player', obj.position.x, this.x);
     this.ctx.drawImage(
       obj.sprite,
       tsize * spriteX,
@@ -96,8 +97,6 @@ class Camera {
     // clamp values
     this.x = Math.max(0, Math.min(this.x, this.maxX));
     this.y = Math.max(0, Math.min(this.y, this.maxY));
-
-    console.log('new pos:', this.x, this.y);
   }
 }
 

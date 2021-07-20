@@ -28,7 +28,8 @@ class Player extends GameObject {
     RIGHT: 'd',
     UP: 'w',
     DOWN: 's',
-    SPEED: 2,
+    SPEED: 3,
+    // SPEED: 1,
   };
   playerHead: String;
 
@@ -111,13 +112,12 @@ class Player extends GameObject {
     if (!this.isMoving) {
       this.animationCounter = 0;
       this.animationIndex = 0;
+    } else {
+      this.move(dirX, dirY);
     }
-
-    this.move(dirX, dirY);
   }
 
   move(dirX: number, dirY: number) {
-    // calc next postion
     const deltaTime = this.engineRef.time.delta;
     const moveFactor = this.movement.SPEED * deltaTime;
     let newPos = {
@@ -125,77 +125,15 @@ class Player extends GameObject {
       y: this.position.y + dirY * moveFactor,
     };
 
-    // check for collision
-    // const isCollided = this.engineRef.checkMapCollider({
-    //   x: Math.floor(newPos.x),
-    //   y: Math.floor(newPos.y),
-    // });
+    const isCollided = this.engineRef.checkMapCollider(
+      dirX > 0 || dirY > 0
+        ? {x: newPos.x + 1, y: newPos.y + 1}
+        : {x: newPos.x, y: newPos.y},
+    );
 
     // if no collision, move
-    this.position = newPos;
-  }
-
-  handleMove(direction: string) {
-    // const movement = 0.2;
-    const movement = 1;
-    let newPos = {x: this.position.x, y: this.position.y};
-
-    let keyPressed = false;
-
-    switch (direction) {
-      case 'w':
-        if (this.playerHead === 'UP') {
-          this.animationCounter = (this.animationCounter + 1) % 6;
-          newPos.y -= 1 * movement;
-          keyPressed = true;
-        } else {
-          this.playerHead = 'UP';
-        }
-        break;
-      case 'a':
-        if (this.playerHead === 'LEFT') {
-          newPos.x -= 1 * movement;
-          this.animationCounter = (this.animationCounter + 1) % 6;
-          keyPressed = true;
-        } else {
-          this.playerHead = 'LEFT';
-        }
-        break;
-      case 'd':
-        if (this.playerHead === 'RIGHT') {
-          this.animationCounter = (this.animationCounter + 1) % 6;
-          newPos.x += 1 * movement;
-          keyPressed = true;
-        } else {
-          this.playerHead = 'RIGHT';
-        }
-        break;
-      case 's':
-        if (this.playerHead === 'DOWN') {
-          this.animationCounter = (this.animationCounter + 1) % 6;
-          newPos.y += 1 * movement;
-          keyPressed = true;
-        } else {
-          this.playerHead = 'DOWN';
-        }
-        break;
-    }
-
-    if (keyPressed) {
-      // check if playes collides with the obstacle in the map
-      const isCollided = this.engineRef.checkMapCollider({
-        x: Math.floor(newPos.x),
-        y: Math.floor(newPos.y),
-      });
-
-      if (!isCollided) {
-        // move player
-        this.position.x = newPos.x;
-        this.position.y = newPos.y;
-
-        // move camera
-        this.engineRef.camera?.follow(this);
-      }
+    if (!isCollided) {
+      this.position = newPos;
     }
   }
 }

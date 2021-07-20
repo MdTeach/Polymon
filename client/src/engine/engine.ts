@@ -70,11 +70,16 @@ class Engine {
     if (!this.baseMap) throw new Error('Basemap not inited');
     if (!this.camera) throw new Error('Camera not inited');
 
-    pos.x += this.camera.x;
-    pos.y += this.camera.y;
-    const nextTile = this.baseMap.getTile(pos.x, pos.y);
+    let x = Math.floor(pos.x);
+    let y = Math.floor(pos.y);
+    const tile = this.baseMap.getTile(x, y);
 
-    if (this.baseMap.tileData.colliders.indexOf(nextTile) > -1) return true;
+    // console.log('tile', tile, 'pos', pos, 'x', x, 'y', y);
+
+    if (this.baseMap.tileData.colliders.indexOf(tile) > -1) {
+      return true;
+    }
+
     return false;
   }
 
@@ -103,6 +108,8 @@ class Engine {
     this.camera.follow(this.player);
 
     this.camera.renderMap(this.baseMap);
+    // console.log('player', this.player.position);
+
     this.camera.renderObject(this.player);
 
     // render text
@@ -142,7 +149,6 @@ class Engine {
 
     // player render
     this.camera.renderObject(this.player);
-    console.log(this.camera.x, this.camera.y);
 
     this.update();
   }
