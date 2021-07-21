@@ -8,6 +8,7 @@ class Engine {
   width: number;
   camera: Camera | undefined;
   secene: Scene | undefined;
+  pausedScene: Scene | undefined;
 
   time = {
     now: 10,
@@ -58,15 +59,12 @@ class Engine {
     });
   }
 
-  // if player in grass
-  // if (
-  //   this.checkLocationEvent(this.player.position, 4) &&
-  //   this.player.isMoving
-  // ) {
-  //   if (Math.random() < 0.001) {
-  //     console.log('pokemon');
-  //   }
-  // }
+  // switch between two scenes
+  switchScene(currentScene: Scene, newScene: Scene) {
+    //
+    this.pausedScene = currentScene;
+    this.secene = newScene;
+  }
 
   async update() {
     window.requestAnimationFrame(() => {

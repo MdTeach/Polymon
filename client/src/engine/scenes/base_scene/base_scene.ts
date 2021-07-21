@@ -9,6 +9,7 @@ import CrystalTileSprite from 'assets/tilemaps/crystal_min.png';
 import {Camera} from 'engine/camera/camera';
 import engineConfig from 'engine/engine_config';
 import {Position} from 'types/Common';
+import {getBattleScene} from '../battle_scene/base_battle_scene';
 
 class BaseScene extends Scene {
   camera: Camera | undefined;
@@ -21,7 +22,7 @@ class BaseScene extends Scene {
   // }
 
   // pokemon on enter grass
-  pokemon_on_enter_grass() {
+  async pokemon_on_enter_grass() {
     if (!this.player) throw new Error('Player not loaded');
     if (
       this.checkLocationEvent(this.player.position, 4) &&
@@ -29,6 +30,11 @@ class BaseScene extends Scene {
     ) {
       if (Math.random() < 0.01) {
         console.log('pokemon');
+        // Invoke the secene transfer event
+        // 1) save the current scene
+        // 2) change the scene
+        const battleScene = await getBattleScene(this.engine);
+        this.engine.switchScene(this, battleScene);
       }
     }
   }
