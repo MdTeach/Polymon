@@ -41,11 +41,6 @@ class Camera {
       for (let r = startRow; r < endRow; r++) {
         const tile = map.getTile(c, r);
         const [tileX, tileY] = map.getTileLocation(tile);
-        // console.log(`place ${tile} to ${tileX},${tileY}`);
-        // console.log(`place ${tile} to ${c - startCol},${r - startRow}`);
-        // if (tile === 7) {
-        //   console.log(c, r);
-        // }
 
         this.ctx.drawImage(
           map.tileSheet,
@@ -60,13 +55,6 @@ class Camera {
         );
       }
     }
-
-    // this.ctx.strokeRect(
-    //   this.x * scaledValue,
-    //   this.y * scaledValue,
-    //   width * scaledValue,
-    //   height * scaledValue,
-    // );
   }
 
   renderObject(obj: GameObject) {
