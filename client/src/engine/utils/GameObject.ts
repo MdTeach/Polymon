@@ -1,5 +1,6 @@
 import {throws} from 'assert';
 import Engine from 'engine/engine';
+import Scene from 'engine/scenes/scene';
 
 interface Position {
   x: number;
@@ -10,10 +11,10 @@ abstract class GameObject {
   sprite: HTMLImageElement;
   position: Position;
   tsize: number;
-  engineRef: Engine;
+  scene: Scene;
 
   constructor(
-    engineRef: Engine,
+    scene: Scene,
     pos: Position = {x: 0, y: 0},
     imageSrc: string,
     tsize = 16,
@@ -22,7 +23,7 @@ abstract class GameObject {
     this.sprite.src = imageSrc;
     this.position = pos;
     this.tsize = tsize;
-    this.engineRef = engineRef;
+    this.scene = scene;
   }
 
   abstract getSpriteLocation(): [number, number];

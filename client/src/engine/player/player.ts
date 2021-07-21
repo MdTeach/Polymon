@@ -1,4 +1,4 @@
-import Engine from 'engine/engine';
+import Scene from 'engine/scenes/scene';
 import GameObject from 'engine/utils/GameObject';
 
 interface Position {
@@ -21,7 +21,7 @@ class Player extends GameObject {
   private animationCounter = 0;
   private animationFrameLimit = 10;
   private animationIndex = 0;
-  private isMoving = false;
+  isMoving = false;
 
   private movement = {
     LEFT: 'a',
@@ -34,11 +34,11 @@ class Player extends GameObject {
   playerHead: String;
 
   constructor(
-    engine: Engine,
+    scene: Scene,
     pos: Position = {x: 0, y: 0},
     imageSrc: string = '',
   ) {
-    super(engine, pos, imageSrc);
+    super(scene, pos, imageSrc);
     this.playerHead = 'LEFT';
   }
 
@@ -63,7 +63,7 @@ class Player extends GameObject {
 
   update() {
     // handle movement
-    const input = this.engineRef.input;
+    const input = this.scene.engine.input;
     let dirX = 0;
     let dirY = 0;
 
@@ -118,18 +118,21 @@ class Player extends GameObject {
   }
 
   move(dirX: number, dirY: number) {
-    const deltaTime = this.engineRef.time.delta;
+    const deltaTime = this.scene.engine.time.delta;
     const moveFactor = this.movement.SPEED * deltaTime;
     let newPos = {
       x: this.position.x + dirX * moveFactor,
       y: this.position.y + dirY * moveFactor,
     };
 
-    const isCollided = this.engineRef.checkMapCollider(
-      dirX > 0 || dirY > 0
-        ? {x: newPos.x + 1, y: newPos.y + 1}
-        : {x: newPos.x, y: newPos.y},
-    );
+    // const isCollided = this.scene.checkMapCollider(
+    //   dirX > 0 || dirY > 0
+    //     ? {x: newPos.x + 1, y: newPos.y + 1}
+    //     : {x: newPos.x, y: newPos.y},
+    // );
+    const isCollided = false;
+
+    console.log('collided', isCollided, newPos, this.position);
 
     // if no collision, move
     if (!isCollided) {
@@ -138,8 +141,8 @@ class Player extends GameObject {
   }
 }
 
-const getPlayer = async (engine: Engine, pos: Position, imageSrc: string) => {
-  const player = new Player(engine, pos, imageSrc);
+const getPlayer = async (scene: Scene, pos: Position, imageSrc: string) => {
+  const player = new Player(scene, pos, imageSrc);
   await player.loadImage();
   return player;
 };

@@ -1,21 +1,13 @@
 import {Camera} from 'engine/camera/camera';
-
-import getPlayer, {Player} from 'engine/player/player';
-import PlayerSprite from 'assets/player/player.png';
-import {Map, loadMap} from 'engine/maps/Map';
-import CrystalTileData from 'engine/maps/tiled_data/crystal_base';
-import CrystalTileSprite from 'assets/tilemaps/crystal_min.png';
-
-import engineConfig from './engine_config';
-import {Position} from 'types/Common';
+import Scene from './scenes/scene';
+import {getBaseScene} from './scenes/base_scene/base_scene';
 
 class Engine {
   ctx: CanvasRenderingContext2D;
   height: number;
   width: number;
   camera: Camera | undefined;
-  player: Player | undefined;
-  baseMap: Map | undefined;
+  secene: Scene | undefined;
 
   time = {
     now: 10,
@@ -66,91 +58,46 @@ class Engine {
     });
   }
 
-  checkMapCollider(pos: Position) {
-    if (!this.baseMap) throw new Error('Basemap not inited');
-    if (!this.camera) throw new Error('Camera not inited');
+  // if player in grass
+  // if (
+  //   this.checkLocationEvent(this.player.position, 4) &&
+  //   this.player.isMoving
+  // ) {
+  //   if (Math.random() < 0.001) {
+  //     console.log('pokemon');
+  //   }
+  // }
 
-    let x = Math.floor(pos.x);
-    let y = Math.floor(pos.y);
-    const tile = this.baseMap.getTile(x, y);
-
-    // console.log('tile', tile, 'pos', pos, 'x', x, 'y', y);
-
-    if (this.baseMap.tileData.colliders.indexOf(tile) > -1) {
-      return true;
-    }
-
-    return false;
-  }
-
-  update() {
-    if (!this.player) throw new Error('Player not inited');
-    if (!this.baseMap) throw new Error('Basemap not inited');
-    if (!this.camera) throw new Error('Camera not inited');
+  async update() {
+    window.requestAnimationFrame(() => {
+      this.update();
+    });
 
     // time clock
     const currentTime = window.performance.now();
     this.time.delta = (currentTime - this.time.lastFrame) / 1000;
     this.time.lastFrame = currentTime;
-    // console.log('fps', this.time.fps());
 
-    window.requestAnimationFrame(() => {
-      this.update();
-    });
-
-    var height = document.documentElement.clientHeight;
-    var width = document.documentElement.clientWidth;
-    this.ctx.canvas.height = height;
-    this.ctx.canvas.width = width;
+    // context setup
+    this.ctx.canvas.height = document.documentElement.clientHeight;
+    this.ctx.canvas.width = document.documentElement.clientWidth;
     this.ctx.imageSmoothingEnabled = false;
 
-    this.player.update();
-    this.camera.follow(this.player);
+    console.log('loop');
+    if (!this.secene) throw new Error('Player not inited');
 
-    this.camera.renderMap(this.baseMap);
-    // console.log('player', this.player.position);
-
-    this.camera.renderObject(this.player);
-
-    // render text
-    // let ctx = this.ctx;
-    // ctx.font = 'bold 50px serif';
-    // ctx.fillStyle = '#008000';
-    // if (Math.floor(window.performance.now()) % 5 === 0) {
-    //   this.time.lastFPS = this.time.fps();
-    // }
-    // ctx.fillText(`FPS ${this.time.lastFPS}`, 200, 500);
+    this.secene.update_scene();
   }
 
   async start(loop = true) {
-    this.player = await getPlayer(this, {x: 0, y: 0}, PlayerSprite);
-    this.baseMap = await loadMap(CrystalTileSprite, CrystalTileData);
-    this.camera = new Camera(this.ctx, engineConfig.camera, this.baseMap);
-    console.log('playerLoaded');
-    console.log('map loaded');
-
-    this.player.position = {
-      x: this.camera.config.width / 2,
-      y: this.camera.config.height / 2,
-    };
-
-    this.camera.x = this.player.position.x - this.camera.config.width / 2;
-    this.camera.y = this.player.position.y - this.camera.config.height / 2;
-
-    // inital rendering
-    var height = document.documentElement.clientHeight;
-    var width = document.documentElement.clientWidth;
-    this.ctx.canvas.height = height;
-    this.ctx.canvas.width = width;
+    this.ctx.canvas.height = document.documentElement.clientHeight;
+    this.ctx.canvas.width = document.documentElement.clientWidth;
     this.ctx.imageSmoothingEnabled = false;
 
-    // render map
-    this.camera.renderMap(this.baseMap);
+    this.secene = await getBaseScene(this);
+    await this.secene.start_scene();
 
-    // player render
-    this.camera.renderObject(this.player);
-
-    this.update();
+    if (loop) this.update();
   }
 }
 
