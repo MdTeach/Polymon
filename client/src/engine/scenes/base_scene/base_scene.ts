@@ -19,39 +19,41 @@ class BaseScene extends Scene {
   // constructor(engine: Engine, ctx: CanvasRenderingContext2D) {
   //   super(engine, ctx);
   // }
-  // if player in grass
-  // if (
-  //   this.checkLocationEvent(this.player.position, 4) &&
-  //   this.player.isMoving
-  // ) {
-  //   if (Math.random() < 0.001) {
-  //     console.log('pokemon');
-  //   }
-  // }
+
+  // pokemon on enter grass
+  pokemon_on_enter_grass() {
+    if (!this.player) throw new Error('Player not loaded');
+    if (
+      this.checkLocationEvent(this.player.position, 4) &&
+      this.player.isMoving
+    ) {
+      if (Math.random() < 0.01) {
+        console.log('pokemon');
+      }
+    }
+  }
 
   checkMapCollider(pos: Position) {
-    // if (!this.baseMap) throw new Error('Basemap not inited');
-    // if (!this.camera) throw new Error('Camera not inited');
+    if (!this.baseMap) throw new Error('Basemap not inited');
+    if (!this.camera) throw new Error('Camera not inited');
 
-    // let x = Math.floor(pos.x);
-    // let y = Math.floor(pos.y);
-    // const tile = this.baseMap.getTile(x, y);
+    let x = Math.floor(pos.x);
+    let y = Math.floor(pos.y);
+    const tile = this.baseMap.getTile(x, y);
 
-    // if (this.baseMap.tileData.colliders.indexOf(tile) > -1) {
-    //   return true;
-    // }
-    // return false;
+    if (this.baseMap.tileData.colliders.indexOf(tile) > -1) {
+      return true;
+    }
     return false;
   }
 
   checkLocationEvent(pos: Position, tile: number) {
-    return false;
-    // if (!this.baseMap) throw new Error('Basemap not inited');
-    // if (!this.camera) throw new Error('Camera not inited');
+    if (!this.baseMap) throw new Error('Basemap not inited');
+    if (!this.camera) throw new Error('Camera not inited');
 
-    // let x = Math.floor(pos.x);
-    // let y = Math.floor(pos.y);
-    // return tile === this.baseMap.getTile(x, y);
+    let x = Math.floor(pos.x);
+    let y = Math.floor(pos.y);
+    return tile === this.baseMap.getTile(x, y);
   }
 
   async start_scene() {
@@ -81,6 +83,7 @@ class BaseScene extends Scene {
     if (!this.camera) throw new Error('Camera not inited');
 
     this.player.update();
+    this.pokemon_on_enter_grass();
     this.camera.follow(this.player);
 
     this.camera.renderMap(this.baseMap);

@@ -62,7 +62,6 @@ class Camera {
     const scaledValue = tsize * this.config.scaleF;
     const [spriteX, spriteY] = obj.getSpriteLocation();
 
-    // console.log('player', obj.position.x, this.x);
     this.ctx.drawImage(
       obj.sprite,
       tsize * spriteX,

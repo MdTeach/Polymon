@@ -1,4 +1,4 @@
-import Scene from 'engine/scenes/scene';
+import RpgScene from 'engine/scenes/rpg_walkable_scene';
 import GameObject from 'engine/utils/GameObject';
 
 interface Position {
@@ -32,14 +32,16 @@ class Player extends GameObject {
     // SPEED: 1,
   };
   playerHead: String;
+  scene: RpgScene;
 
   constructor(
-    scene: Scene,
+    scene: RpgScene,
     pos: Position = {x: 0, y: 0},
     imageSrc: string = '',
   ) {
-    super(scene, pos, imageSrc);
+    super(pos, imageSrc);
     this.playerHead = 'LEFT';
+    this.scene = scene;
   }
 
   getSpriteLocation(): [number, number] {
@@ -125,14 +127,11 @@ class Player extends GameObject {
       y: this.position.y + dirY * moveFactor,
     };
 
-    // const isCollided = this.scene.checkMapCollider(
-    //   dirX > 0 || dirY > 0
-    //     ? {x: newPos.x + 1, y: newPos.y + 1}
-    //     : {x: newPos.x, y: newPos.y},
-    // );
-    const isCollided = false;
-
-    console.log('collided', isCollided, newPos, this.position);
+    const isCollided = this.scene.checkMapCollider(
+      dirX > 0 || dirY > 0
+        ? {x: newPos.x + 1, y: newPos.y + 1}
+        : {x: newPos.x, y: newPos.y},
+    );
 
     // if no collision, move
     if (!isCollided) {
@@ -141,7 +140,7 @@ class Player extends GameObject {
   }
 }
 
-const getPlayer = async (scene: Scene, pos: Position, imageSrc: string) => {
+const getPlayer = async (scene: RpgScene, pos: Position, imageSrc: string) => {
   const player = new Player(scene, pos, imageSrc);
   await player.loadImage();
   return player;
