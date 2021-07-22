@@ -1,9 +1,16 @@
+@font-face {
+  font-family: 'pokemon';
+
+  src: local('pokemon'), url('/src/assets/fonts/font.ttf') format('truetype');
+}
+
 .container {
   background-color: #000000;
   /* width: 500px;
   height: 500px; */
   position: relative;
   text-align: center;
+  font-family: 'pokemon';
 }
 
 canvas {

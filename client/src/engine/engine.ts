@@ -1,6 +1,7 @@
 import {Camera} from 'engine/camera/camera';
 import Scene from './scenes/scene';
 import {getBaseScene} from './scenes/base_scene/base_scene';
+import {getBattleScene} from './scenes/battle_scene/base_battle_scene';
 
 class Engine {
   ctx: CanvasRenderingContext2D;
@@ -92,7 +93,8 @@ class Engine {
     this.ctx.canvas.width = document.documentElement.clientWidth;
     this.ctx.imageSmoothingEnabled = false;
 
-    this.secene = await getBaseScene(this);
+    // this.secene = await getBaseScene(this);
+    this.secene = await getBattleScene(this);
     await this.secene.start_scene();
 
     if (loop) this.update();
