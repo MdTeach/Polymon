@@ -20,7 +20,8 @@ class Engine {
   };
 
   input = {
-    movementKeys: ['a', 'd', 'w', 's'],
+    movementKeys: ['a', 'd', 'w', 's', ' '],
+    interactKey: ['space'],
     _keys: {} as {[key: string]: boolean},
     _isDown: (key: string) => {
       if (this.input.movementKeys.indexOf(key) > -1) {

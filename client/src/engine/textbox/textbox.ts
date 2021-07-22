@@ -59,6 +59,7 @@ class TextBox {
     }
 
     this.handleAnimation(deltaTime);
+    return this.animated;
   }
 
   handleAnimation(detlaTime: number) {
@@ -72,6 +73,12 @@ class TextBox {
       this.counter = 0;
       this.wordIdx++;
     }
+  }
+
+  reset() {
+    this.wordIdx = 0;
+    this.counter = 0;
+    this.animated = false;
   }
 }
 
