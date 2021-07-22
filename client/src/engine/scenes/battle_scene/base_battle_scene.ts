@@ -3,10 +3,15 @@ import Scene from '../scene';
 
 import PlayerImage from 'assets/battle_view/battle_player.png';
 import TextBox from 'engine/textbox/textbox';
+import PikajuImage from 'assets/pokemons/01_Pikaju.png';
+import PokemonInfo from 'types/PokemonInfo';
+import Pokemon from 'engine/pokemon/Pokemon';
 
 class BaseBattleScene extends Scene {
   playerImage: HTMLImageElement;
   textBox: TextBox;
+  pokemon: Pokemon | undefined;
+
   texts = [
     'Pokemon arrived !!! <> now what do you want to do ???????pokemon arrived !!! now what do you want to do ??????? Pokemon arrived !!! now what do you want to do ???????',
     'I challenge you with my pokemon, I challenge you with my pokemonI challenge you with my pokemon, go alaka jam, here we go... ???!!!',
@@ -42,11 +47,30 @@ class BaseBattleScene extends Scene {
 
   async start_scene() {
     await this.loadImage(this.playerImage);
-
+    const pokemon = await this.getPokemon();
+    this.pokemon = pokemon;
     this.init_text_box();
   }
 
+  async getPokemon() {
+    const pikajuInfo: PokemonInfo = {
+      tsize: 16,
+      spriteSrc: PikajuImage,
+      userFacingPos: [0, 1],
+      noAnimations: 6,
+      width: 2.5,
+      height: 3.5,
+      tileOffsets: [0.25, 0],
+    };
+
+    const pokemon = new Pokemon(pikajuInfo);
+    await pokemon.loadImage(pikajuInfo.spriteSrc);
+    return pokemon;
+  }
+
   update_scene() {
+    if (!this.pokemon) throw new Error('opponent not defined');
+
     const {height, width} = this.engine.ctx.canvas;
     const ctx = this.engine.ctx;
     ctx.fillStyle = '#F9F8F9';
@@ -66,6 +90,9 @@ class BaseBattleScene extends Scene {
       this.currentText++;
       this.textBox.reset();
     }
+
+    // render the opponet pokemon
+    this.pokemon.render(ctx, this.engine.time.delta);
     ctx.drawImage(this.playerImage, 100, 0.4 * height, 250, 200);
   }
 }
