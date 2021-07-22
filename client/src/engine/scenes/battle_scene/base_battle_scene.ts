@@ -2,19 +2,16 @@ import Engine from 'engine/engine';
 import Scene from '../scene';
 
 import PlayerImage from 'assets/battle_view/battle_player.png';
+import TextBox from 'engine/textbox/textbox';
 
 class BaseBattleScene extends Scene {
   playerImage: HTMLImageElement;
-
+  textBox: TextBox;
   constructor(engine: Engine) {
     super(engine);
     this.playerImage = new Image();
     this.playerImage.src = PlayerImage;
-  }
-
-  async start_scene() {
-    await this.loadImage(this.playerImage);
-    console.log('start_scene');
+    this.textBox = new TextBox({x: 0, y: 0});
   }
 
   loadImage(img: HTMLImageElement) {
@@ -29,20 +26,28 @@ class BaseBattleScene extends Scene {
     });
   }
 
+  async start_scene() {
+    await this.loadImage(this.playerImage);
+
+    // init the textbox
+    const {height, width} = this.engine.ctx.canvas;
+    const textBoxPos = {x: 0, y: (1 - 0.3) * height};
+    this.textBox.pos = textBoxPos;
+    this.textBox.width = width;
+    this.textBox.height = height - textBoxPos.y;
+  }
+
   update_scene() {
+    const {height, width} = this.engine.ctx.canvas;
     const ctx = this.engine.ctx;
-    const {width, height} = ctx.canvas;
-    ctx.fillStyle = '#F8F8F8';
-
+    ctx.fillStyle = '#F9F8F9';
     ctx.fillRect(0, 0, width, height);
-    ctx.lineWidth = 3;
-
-    ctx.strokeRect(100, 0.71 * height, width / 2, 150);
-    ctx.drawImage(this.playerImage, 100, 0.4 * height, 250, 250);
-    ctx.fillStyle = '#000000';
-    ctx.font = 'bold 24px pokemon';
-    // ctx.font = 'bold 24px Arial';
-    ctx.fillText('Wild pokemon appeared!!!', 150, 0.71 * height + 50);
+    this.textBox.render(
+      ctx,
+      'Pokemon arrived !!! <> now what do you want to do ???????pokemon arrived !!! now what do you want to do ??????? Pokemon arrived !!! now what do you want to do ???????',
+      this.engine.time.delta,
+    );
+    ctx.drawImage(this.playerImage, 100, 0.4 * height, 250, 200);
   }
 }
 
