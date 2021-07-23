@@ -89,6 +89,15 @@ class ActionTextBox {
       textWidth,
     );
 
+    // draw selection triangle
+    const trPosX = innerBoxPos.x + textOffSetX / 1.5;
+    const trPosY = innerBoxPos.y + textOffSetY * 2.5;
+    const path = new Path2D();
+    path.moveTo(trPosX, trPosY);
+    path.lineTo(trPosX + 25, trPosY + 15);
+    path.lineTo(trPosX, trPosY + 30);
+    ctx.fill(path);
+
     return this.animated;
   }
 
