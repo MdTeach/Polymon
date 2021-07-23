@@ -58,9 +58,9 @@ class BaseBattleScene extends Scene {
       spriteSrc: PikajuImage,
       userFacingPos: [0, 1],
       noAnimations: 6,
-      width: 2.5,
-      height: 3.5,
-      tileOffsets: [0.25, 0],
+      width: 2.4,
+      height: 2.4,
+      tileOffsets: [0.19, 0],
     };
 
     const pokemon = new Pokemon(pikajuInfo);
@@ -74,6 +74,7 @@ class BaseBattleScene extends Scene {
     const {height, width} = this.engine.ctx.canvas;
     const ctx = this.engine.ctx;
     ctx.fillStyle = '#F9F8F9';
+    // ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, width, height);
 
     // render the tet box and return true if the texbox animation is completed
