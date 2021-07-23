@@ -6,10 +6,12 @@ import TextBox from 'engine/textbox/textbox';
 import PikajuImage from 'assets/pokemons/01_Pikaju.png';
 import PokemonInfo from 'types/PokemonInfo';
 import Pokemon from 'engine/pokemon/Pokemon';
+import ActionTextBox from 'engine/textbox/actionTextBox';
 
 class BaseBattleScene extends Scene {
   playerImage: HTMLImageElement;
   textBox: TextBox;
+  actionText: ActionTextBox;
   pokemon: Pokemon | undefined;
 
   texts = [
@@ -23,6 +25,7 @@ class BaseBattleScene extends Scene {
     this.playerImage = new Image();
     this.playerImage.src = PlayerImage;
     this.textBox = new TextBox({x: 0, y: 0});
+    this.actionText = new ActionTextBox({x: 0, y: 0});
   }
 
   loadImage(img: HTMLImageElement) {
@@ -40,9 +43,16 @@ class BaseBattleScene extends Scene {
   init_text_box() {
     const {height, width} = this.engine.ctx.canvas;
     const textBoxPos = {x: 0, y: (1 - 0.3) * height};
+
+    // textbox init
     this.textBox.pos = textBoxPos;
     this.textBox.width = width;
     this.textBox.height = height - textBoxPos.y;
+
+    // action box init
+    this.actionText.pos = textBoxPos;
+    this.actionText.width = width;
+    this.actionText.height = height - textBoxPos.y;
   }
 
   async start_scene() {
@@ -68,15 +78,7 @@ class BaseBattleScene extends Scene {
     return pokemon;
   }
 
-  update_scene() {
-    if (!this.pokemon) throw new Error('opponent not defined');
-
-    const {height, width} = this.engine.ctx.canvas;
-    const ctx = this.engine.ctx;
-    ctx.fillStyle = '#F9F8F9';
-    // ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, width, height);
-
+  intro_battle_scene(ctx: CanvasRenderingContext2D) {
     // render the tet box and return true if the texbox animation is completed
     const request_next_text = this.textBox.render(
       ctx,
@@ -91,6 +93,25 @@ class BaseBattleScene extends Scene {
       this.currentText++;
       this.textBox.reset();
     }
+  }
+
+  user_action_text(ctx: CanvasRenderingContext2D) {
+    this.actionText.render(ctx, this.engine.time.delta);
+  }
+
+  update_scene() {
+    if (!this.pokemon) throw new Error('opponent not defined');
+
+    const {height, width} = this.engine.ctx.canvas;
+    const ctx = this.engine.ctx;
+
+    // make the bg color white
+    ctx.fillStyle = '#F9F8F9';
+    ctx.fillRect(0, 0, width, height);
+
+    // render the tet box and return true if the texbox animation is completed
+    this.user_action_text(ctx);
+    // this.intro_battle_scene(ctx);
 
     // render the opponet pokemon
     this.pokemon.render(ctx, this.engine.time.delta);
