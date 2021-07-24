@@ -22,8 +22,8 @@ class ActionTextBox {
 
   render(
     ctx: CanvasRenderingContext2D,
-    deltaTime: number,
     userAction: [number, number],
+    data: [string, string, string, string],
   ) {
     ctx.fillStyle = '#000000';
     ctx.lineWidth = 3;
@@ -66,10 +66,12 @@ class ActionTextBox {
     const textOffSetY = 0.1 * innerBoxSize.y;
 
     ctx.font = `bold ${24}px pokemon`;
-    this.draw_action_text('FIGHT', ctx, innerBoxSize, innerBoxPos, [0, 0]);
-    this.draw_action_text('POKEMONS', ctx, innerBoxSize, innerBoxPos, [0, 1]);
-    this.draw_action_text('PACK', ctx, innerBoxSize, innerBoxPos, [1, 0]);
-    this.draw_action_text('RUN', ctx, innerBoxSize, innerBoxPos, [1, 1]);
+
+    const [t1, t2, t3, t4] = data;
+    this.draw_action_text(t1, ctx, innerBoxSize, innerBoxPos, [0, 0]);
+    this.draw_action_text(t2, ctx, innerBoxSize, innerBoxPos, [0, 1]);
+    this.draw_action_text(t3, ctx, innerBoxSize, innerBoxPos, [1, 0]);
+    this.draw_action_text(t4, ctx, innerBoxSize, innerBoxPos, [1, 1]);
 
     // draw selection triangle
     const trPosX = innerBoxPos.x + textOffSetX / 1.5;

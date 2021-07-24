@@ -1,12 +1,16 @@
 import Engine from 'engine/engine';
-import Scene from '../scene';
-
-import PlayerImage from 'assets/battle_view/battle_player.png';
+import ActionTextBox from 'engine/textbox/actionTextBox';
 import TextBox from 'engine/textbox/textbox';
+import Pokemon from 'engine/pokemon/Pokemon';
+import Scene from '../scene';
+import PlayerImage from 'assets/battle_view/battle_player.png';
 import PikajuImage from 'assets/pokemons/01_Pikaju.png';
 import PokemonInfo from 'types/PokemonInfo';
-import Pokemon from 'engine/pokemon/Pokemon';
-import ActionTextBox from 'engine/textbox/actionTextBox';
+import BattleConfig from './battle_config';
+import PikajuData from 'character_data/pikaju_data';
+
+import {getActionsStrings} from './helpers';
+import battleConfig from './battle_config';
 
 class BaseBattleScene extends Scene {
   playerImage: HTMLImageElement;
@@ -75,6 +79,7 @@ class BaseBattleScene extends Scene {
       width: 2.4,
       height: 2.4,
       tileOffsets: [0.19, 0],
+      characterData: PikajuData,
     };
 
     const pokemon = new Pokemon(pikajuInfo);
@@ -129,7 +134,22 @@ class BaseBattleScene extends Scene {
 
     // user confirms the action
     // go back to the text view
+    const {userActions} = BattleConfig;
     if (this.actionView && this.engine.input._isDown(' ')) {
+      const selectedAction = `${this.userAction[0]}${this.userAction[1]}`;
+
+      if (selectedAction === '11') {
+        // run
+        this.texts = [`Running safely_`];
+      } else if (selectedAction === '00') {
+        // fight
+        this.texts = [`Go pikachu!!! I choose you._`];
+      } else {
+        this.texts = [
+          `The ${userActions[selectedAction].name} action is not available. Try another option_`,
+        ];
+      }
+
       this.actionView = false;
       this.textBox.reset();
       this.currentText = 0;
@@ -138,9 +158,9 @@ class BaseBattleScene extends Scene {
   }
 
   user_action_text(ctx: CanvasRenderingContext2D) {
-    // let userAction: [number, number] = [0, 0];
+    const actionStrings = getActionsStrings(battleConfig.userActions);
     this.handle_user_action();
-    this.actionText.render(ctx, this.engine.time.delta, this.userAction);
+    this.actionText.render(ctx, this.userAction, actionStrings);
   }
 
   update_scene() {

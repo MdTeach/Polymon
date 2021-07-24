@@ -1,4 +1,5 @@
 import PokemonInfo from 'types/PokemonInfo';
+import CharacterData from 'types/CharacterData';
 
 class Pokemon {
   sprite: HTMLImageElement;
