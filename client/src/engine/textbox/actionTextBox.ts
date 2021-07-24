@@ -47,6 +47,7 @@ class ActionTextBox {
       x: displaySize.x / 2,
       y: 0.9 * displaySize.y,
     };
+
     ctx.strokeRect(
       innerBoxPos.x,
       innerBoxPos.y,
@@ -61,42 +62,19 @@ class ActionTextBox {
     const textOffSetY = 0.1 * innerBoxSize.y;
 
     ctx.font = `bold ${24}px pokemon`;
-    ctx.fillText(
-      'FIGHT',
-      innerBoxPos.x + textOffSetX,
-      innerBoxPos.y + textHeight + textOffSetY,
-      textWidth,
-    );
-
-    ctx.fillText(
-      'PACK',
-      innerBoxPos.x + textOffSetX + textWidth + textOffSetX,
-      innerBoxPos.y + textHeight + textOffSetY,
-      textWidth,
-    );
-
-    ctx.fillText(
-      'POKEMONS',
-      innerBoxPos.x + textOffSetX,
-      innerBoxPos.y + textHeight * 2 + 1.25 * textOffSetY,
-      textWidth,
-    );
-
-    ctx.fillText(
-      'RUN',
-      innerBoxPos.x + textOffSetX + textWidth + textOffSetX,
-      innerBoxPos.y + textHeight * 2 + 1.25 * textOffSetY,
-      textWidth,
-    );
+    this.draw_action_text('FIGHT', ctx, innerBoxSize, innerBoxPos, [0, 0]);
+    this.draw_action_text('PACK', ctx, innerBoxSize, innerBoxPos, [0, 1]);
+    this.draw_action_text('POKEMONS', ctx, innerBoxSize, innerBoxPos, [1, 0]);
+    this.draw_action_text('RUN', ctx, innerBoxSize, innerBoxPos, [1, 1]);
 
     // draw selection triangle
     const trPosX = innerBoxPos.x + textOffSetX / 1.5;
     const trPosY = innerBoxPos.y + textOffSetY * 2.5;
-    const path = new Path2D();
-    path.moveTo(trPosX, trPosY);
-    path.lineTo(trPosX + 25, trPosY + 15);
-    path.lineTo(trPosX, trPosY + 30);
-    ctx.fill(path);
+    let wOff = textWidth + textOffSetX * 1;
+    let hOff = textHeight * 1 + (1 / 3) * textOffSetY;
+
+    // top left
+    ctx.fill(this.get_action_arrow(trPosX, trPosY, wOff, hOff, [0, 1]));
 
     return this.animated;
   }
@@ -112,6 +90,48 @@ class ActionTextBox {
       this.counter = 0;
       this.wordIdx++;
     }
+  }
+
+  draw_action_text(
+    text: string,
+    ctx: CanvasRenderingContext2D,
+    innerBoxSize: Position,
+    innerBoxPos: Position,
+    seletedText: [number, number],
+  ) {
+    // inner box actions
+    const textWidth = 0.3 * innerBoxSize.x;
+    const textOffSetX = 0.15 * innerBoxSize.x;
+    const textHeight = 0.3 * innerBoxSize.y;
+    const textOffSetY = 0.1 * innerBoxSize.y;
+
+    const [x, y] = seletedText;
+    const offX = x * (textOffSetX + textWidth);
+    const offY = y * (textHeight + 0.25 * textOffSetY);
+    ctx.fillText(
+      text,
+      innerBoxPos.x + textOffSetX + offX,
+      innerBoxPos.y + textHeight + textOffSetY + offY,
+      textWidth,
+    );
+  }
+
+  get_action_arrow(
+    trPosX: number,
+    trPosY: number,
+    wOff: number,
+    hOff: number,
+    selectedAction: [number, number],
+  ) {
+    const [x, y] = selectedAction;
+    wOff *= x;
+    hOff *= y;
+
+    const path = new Path2D();
+    path.moveTo(trPosX + wOff, trPosY + hOff);
+    path.lineTo(trPosX + wOff + 25, trPosY + 15 + hOff);
+    path.lineTo(trPosX + wOff, trPosY + 30 + hOff);
+    return path;
   }
 
   reset() {
