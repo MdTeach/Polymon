@@ -1,20 +1,21 @@
 import CharacterData from 'types/CharacterData';
 const PikajuData: CharacterData = {
+  name: 'Piklaju',
   attacks: {
     '00': {
       name: 'Tackle',
       hit: 10,
     },
     '01': {
-      name: 'Tackle',
+      name: 'Quick Attack',
       hit: 10,
     },
     '10': {
-      name: 'Tackle',
+      name: 'Thunder Shock',
       hit: 10,
     },
     '11': {
-      name: 'Tackle',
+      name: 'Swift',
       hit: 10,
     },
   },
