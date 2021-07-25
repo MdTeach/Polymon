@@ -8,7 +8,7 @@ import PikajuImage from 'assets/pokemons/01_Pikaju.png';
 import BattleBarImage from 'assets/battle_view/battle_bar.png';
 import PokemonInfo from 'types/PokemonInfo';
 import PikajuData from 'character_data/pikaju_data';
-import GameController from './controller';
+import TextActionController from './textaction_controller';
 import PlayersImgRenderer from './battle_players_renderer';
 
 class BaseBattleScene extends Scene {
@@ -18,8 +18,12 @@ class BaseBattleScene extends Scene {
   actionText: ActionTextBox;
   pokemon: Pokemon | undefined;
   enemyPokemon: Pokemon | undefined;
-  controller: GameController;
+  textActionController: TextActionController;
+
   playerRender: PlayersImgRenderer;
+  playerTurn = true;
+  playerHealth = 100;
+  enemyHealth = 100;
 
   constructor(engine: Engine) {
     super(engine);
@@ -29,13 +33,13 @@ class BaseBattleScene extends Scene {
     this.statusBarImage.src = BattleBarImage;
     this.textBox = new TextBox({x: 0, y: 0});
     this.actionText = new ActionTextBox({x: 0, y: 0});
-    this.controller = new GameController(
+    this.textActionController = new TextActionController(
       this.engine,
       this.textBox,
       this.actionText,
     );
     this.playerRender = new PlayersImgRenderer(
-      this.controller,
+      this.textActionController,
       this.engine.ctx,
     );
   }
@@ -90,27 +94,45 @@ class BaseBattleScene extends Scene {
   render_palyer_image() {
     if (!this.pokemon) throw new Error('Pokemon not inited');
     this.playerRender.render_palyer_image(this.playerImage, this.pokemon);
-
     const tsize = 16;
-    const health = 75;
-    this.playerRender.render_user_pokemon_health(
-      this.statusBarImage,
-      tsize,
-      health,
-    );
+    if (this.textActionController.showPokemon) {
+      this.playerRender.render_user_pokemon_health(
+        this.statusBarImage,
+        tsize,
+        this.playerHealth,
+      );
+    }
+  }
+
+  handle_gameover() {
+    this.playerHealth = this.textActionController.playerHealth;
+    this.enemyHealth = this.textActionController.enemyHealth;
+
+    if (this.playerHealth <= 0) {
+      // we loose
+      alert('You loosed');
+    } else if (this.enemyHealth <= 0) {
+      alert('You won!!');
+    }
   }
 
   async start_scene() {
     await this.loadImage(this.playerImage);
     await this.loadImage(this.statusBarImage);
     const pokemon = await this.getPokemon();
+    const enemyPokemon = await this.getPokemon();
+
     this.pokemon = pokemon;
-    this.controller.pokemon = pokemon;
+    this.textActionController.pokemon = this.pokemon;
+
+    this.enemyPokemon = enemyPokemon;
+    this.textActionController.enemyPokemon = this.enemyPokemon;
     this.init_text_box();
   }
 
   update_scene() {
     if (!this.pokemon) throw new Error('opponent not defined');
+    if (!this.enemyPokemon) throw new Error('opponent not defined');
 
     const {height, width} = this.engine.ctx.canvas;
     const ctx = this.engine.ctx;
@@ -119,17 +141,22 @@ class BaseBattleScene extends Scene {
     ctx.fillStyle = '#F9F8F9';
     ctx.fillRect(0, 0, width, height);
 
+    // handle gameover
+    this.handle_gameover();
+
     // render the tet box and return true if the texbox animation is completed
-    this.controller.switch_text2action();
-    if (this.controller.textView) this.controller.intro_battle_scene(ctx);
-    if (this.controller.actionView) this.controller.user_action_text(ctx);
+    this.textActionController.switch_text2action();
+    if (this.textActionController.textView)
+      this.textActionController.intro_battle_scene(ctx);
+    if (this.textActionController.actionView)
+      this.textActionController.user_action_text(ctx);
 
     // render the opponet pokemon
-    this.pokemon.render(ctx, this.engine.time.delta);
+    this.enemyPokemon.render(ctx, this.engine.time.delta);
     this.playerRender.render_opponent_pokemon_health(
       this.statusBarImage,
       16,
-      10,
+      this.enemyHealth,
     );
     this.render_palyer_image();
   }

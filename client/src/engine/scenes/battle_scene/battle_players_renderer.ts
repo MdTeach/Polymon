@@ -1,5 +1,5 @@
 import Pokemon from 'engine/pokemon/Pokemon';
-import Controller from './controller';
+import Controller from './textaction_controller';
 
 class PlayersImgRenderer {
   controller: Controller;

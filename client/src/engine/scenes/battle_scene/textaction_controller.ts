@@ -11,8 +11,13 @@ class Controller {
   userAction: [number, number] = [0, 0];
   engine: Engine;
   pokemon: Pokemon | undefined;
-  showPokemon = true;
-  // showPokemon = false;
+  enemyPokemon: Pokemon | undefined;
+
+  playerTurn = true;
+  playerHealth = 100;
+  enemyHealth = 100;
+  // showPokemon = true;
+  showPokemon = false;
 
   constructor(engine: Engine, textBox: TextBox, actionText: ActionTextBox) {
     this.textBox = textBox;
@@ -21,7 +26,8 @@ class Controller {
   }
 
   // text box config
-  texts = ['A wild pokemon appeared_'];
+  texts = ['A wild pokemon appeared!!! What do you want to do ?_'];
+
   currentText = 0;
 
   // show user/pokemon acions text or normal text
@@ -43,11 +49,35 @@ class Controller {
       if (this.currentText < this.texts.length - 1) {
         this.currentText++;
         this.textBox.reset();
+      } else if (!this.playerTurn) {
+        // enemy trun
+        this.handleOponentAction();
       } else {
         // can switch from the text and action view
         this.can_switch_text2action = true;
       }
     }
+  }
+
+  handleOponentAction() {
+    if (!this.enemyPokemon) throw new Error('Foe Pokemon not defined');
+    const actions = ['00', '01', '10', '11'];
+    const randOp = Math.floor(Math.random() * actions.length);
+    const oponentAction = actions[randOp];
+
+    const move =
+      this.enemyPokemon.pokemonInfo.characterData.attacks[oponentAction];
+    const actionName = move.name;
+    const pkmName = this.enemyPokemon.pokemonInfo.characterData.name;
+    const hit = move.hit;
+    this.playerHealth -= hit;
+
+    // update the text
+    this.textBox.reset();
+    this.texts = ['.....', `Enemy ${pkmName} used ${actionName} !!!_`];
+
+    //switch to the palyer turn
+    this.playerTurn = true;
   }
 
   switch_text2action() {
@@ -99,11 +129,18 @@ class Controller {
   handle_pokemon_action_option(selectedAction: string) {
     if (!this.pokemon) throw new Error('Pokemon not inited');
 
-    const actionName =
-      this.pokemon.pokemonInfo.characterData.attacks[selectedAction].name;
-    const pkmName = this.pokemon.pokemonInfo.characterData.name;
+    if (this.playerTurn) {
+      const move =
+        this.pokemon.pokemonInfo.characterData.attacks[selectedAction];
+      const actionName = move.name;
+      const pkmName = this.pokemon.pokemonInfo.characterData.name;
+      const hit = move.hit;
+      this.enemyHealth -= hit;
 
-    this.texts = [`${pkmName} used ${actionName}_`];
+      // decrease the  opponent health
+      this.texts = [`${pkmName} used ${actionName}_`];
+      this.playerTurn = false;
+    }
   }
 
   handle_user_action_option(selectedAction: string) {

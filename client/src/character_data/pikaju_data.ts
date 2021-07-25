@@ -8,15 +8,15 @@ const PikajuData: CharacterData = {
     },
     '01': {
       name: 'Quick Attack',
-      hit: 10,
+      hit: 15,
     },
     '10': {
       name: 'Thunder Shock',
-      hit: 10,
+      hit: 25,
     },
     '11': {
       name: 'Swift',
-      hit: 10,
+      hit: 18,
     },
   },
 };
