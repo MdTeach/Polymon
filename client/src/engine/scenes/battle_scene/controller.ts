@@ -11,7 +11,8 @@ class Controller {
   userAction: [number, number] = [0, 0];
   engine: Engine;
   pokemon: Pokemon | undefined;
-  showPokemon = false;
+  showPokemon = true;
+  // showPokemon = false;
 
   constructor(engine: Engine, textBox: TextBox, actionText: ActionTextBox) {
     this.textBox = textBox;

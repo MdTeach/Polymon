@@ -5,29 +5,38 @@ import Pokemon from 'engine/pokemon/Pokemon';
 import Scene from '../scene';
 import PlayerImage from 'assets/battle_view/battle_player.png';
 import PikajuImage from 'assets/pokemons/01_Pikaju.png';
+import BattleBarImage from 'assets/battle_view/battle_bar.png';
 import PokemonInfo from 'types/PokemonInfo';
 import PikajuData from 'character_data/pikaju_data';
-
 import GameController from './controller';
+import PlayersImgRenderer from './battle_players_renderer';
 
 class BaseBattleScene extends Scene {
   playerImage: HTMLImageElement;
+  statusBarImage: HTMLImageElement;
   textBox: TextBox;
   actionText: ActionTextBox;
   pokemon: Pokemon | undefined;
   enemyPokemon: Pokemon | undefined;
   controller: GameController;
+  playerRender: PlayersImgRenderer;
 
   constructor(engine: Engine) {
     super(engine);
     this.playerImage = new Image();
     this.playerImage.src = PlayerImage;
+    this.statusBarImage = new Image();
+    this.statusBarImage.src = BattleBarImage;
     this.textBox = new TextBox({x: 0, y: 0});
     this.actionText = new ActionTextBox({x: 0, y: 0});
     this.controller = new GameController(
       this.engine,
       this.textBox,
       this.actionText,
+    );
+    this.playerRender = new PlayersImgRenderer(
+      this.controller,
+      this.engine.ctx,
     );
   }
 
@@ -79,24 +88,21 @@ class BaseBattleScene extends Scene {
   }
 
   render_palyer_image() {
-    if (!this.pokemon) throw new Error('Pokemon not defined');
-    // show either the palyer | pkoemon
-    const {height, width} = this.engine.ctx.canvas;
-    const x = 0.06 * width;
-    const y = 0.35 * height;
-    const w = 0.2 * width;
-    const h = 0.35 * height;
-    const ctx = this.engine.ctx;
+    if (!this.pokemon) throw new Error('Pokemon not inited');
+    this.playerRender.render_palyer_image(this.playerImage, this.pokemon);
 
-    if (this.controller.showPokemon) {
-      this.pokemon.render_back(ctx, x, y, w, h);
-    } else {
-      ctx.drawImage(this.playerImage, x, y, w, h);
-    }
+    const tsize = 16;
+    const health = 75;
+    this.playerRender.render_user_pokemon_health(
+      this.statusBarImage,
+      tsize,
+      health,
+    );
   }
 
   async start_scene() {
     await this.loadImage(this.playerImage);
+    await this.loadImage(this.statusBarImage);
     const pokemon = await this.getPokemon();
     this.pokemon = pokemon;
     this.controller.pokemon = pokemon;
