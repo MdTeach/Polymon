@@ -4,6 +4,8 @@ interface PokemonInfo {
   spriteSrc: string;
   tsize: number;
   noAnimations: number;
+  enemyFacingTile: [number, number];
+  enemyFacingSize: [number, number];
   userFacingPos: [number, number];
   width: number;
   height: number;

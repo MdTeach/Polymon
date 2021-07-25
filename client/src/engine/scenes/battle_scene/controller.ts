@@ -11,6 +11,7 @@ class Controller {
   userAction: [number, number] = [0, 0];
   engine: Engine;
   pokemon: Pokemon | undefined;
+  showPokemon = false;
 
   constructor(engine: Engine, textBox: TextBox, actionText: ActionTextBox) {
     this.textBox = textBox;
@@ -113,6 +114,7 @@ class Controller {
       // fight
       this.texts = [`Go pikachu!!! I choose you._`];
       this.userActionOption = false;
+      this.showPokemon = true;
     } else {
       this.texts = [
         `The ${actionName} action is not available. Try another option_`,

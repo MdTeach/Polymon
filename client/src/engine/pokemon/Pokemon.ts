@@ -1,5 +1,5 @@
 import PokemonInfo from 'types/PokemonInfo';
-import CharacterData from 'types/CharacterData';
+// import CharacterData from 'types/CharacterData';
 
 class Pokemon {
   sprite: HTMLImageElement;
@@ -52,6 +52,32 @@ class Pokemon {
       y,
       scaledVal,
       scaledVal,
+    );
+  }
+
+  render_back(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+  ) {
+    // enemyFacingTile: [14.8, 0.5],
+    //   enemyFacingSize: [3, 3],
+    const tsize = this.pokemonInfo.tsize;
+    const [tileX, tileY] = this.pokemonInfo.enemyFacingTile;
+    const [tsizeX, tsizeY] = this.pokemonInfo.enemyFacingSize;
+
+    ctx.drawImage(
+      this.sprite,
+      tileX * tsize,
+      tileY * tsize,
+      tsizeX * tsize,
+      tsizeY * tsize,
+      x,
+      y,
+      w,
+      h,
     );
   }
 

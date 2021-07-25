@@ -58,29 +58,49 @@ class BaseBattleScene extends Scene {
     this.actionText.height = height - textBoxPos.y;
   }
 
-  async start_scene() {
-    await this.loadImage(this.playerImage);
-    const pokemon = await this.getPokemon();
-    this.pokemon = pokemon;
-    this.controller.pokemon = pokemon;
-    this.init_text_box();
-  }
-
   async getPokemon() {
     const pikajuInfo: PokemonInfo = {
       tsize: 16,
       spriteSrc: PikajuImage,
+      enemyFacingTile: [14.8, 0.5],
+      enemyFacingSize: [3, 3],
       userFacingPos: [0, 1],
       noAnimations: 6,
       width: 2.4,
       height: 2.4,
       tileOffsets: [0.19, 0],
+
       characterData: PikajuData,
     };
 
     const pokemon = new Pokemon(pikajuInfo);
     await pokemon.loadImage(pikajuInfo.spriteSrc);
     return pokemon;
+  }
+
+  render_palyer_image() {
+    if (!this.pokemon) throw new Error('Pokemon not defined');
+    // show either the palyer | pkoemon
+    const {height, width} = this.engine.ctx.canvas;
+    const x = 0.06 * width;
+    const y = 0.35 * height;
+    const w = 0.2 * width;
+    const h = 0.35 * height;
+    const ctx = this.engine.ctx;
+
+    if (this.controller.showPokemon) {
+      this.pokemon.render_back(ctx, x, y, w, h);
+    } else {
+      ctx.drawImage(this.playerImage, x, y, w, h);
+    }
+  }
+
+  async start_scene() {
+    await this.loadImage(this.playerImage);
+    const pokemon = await this.getPokemon();
+    this.pokemon = pokemon;
+    this.controller.pokemon = pokemon;
+    this.init_text_box();
   }
 
   update_scene() {
@@ -100,7 +120,7 @@ class BaseBattleScene extends Scene {
 
     // render the opponet pokemon
     this.pokemon.render(ctx, this.engine.time.delta);
-    ctx.drawImage(this.playerImage, 100, 0.4 * height, 250, 200);
+    this.render_palyer_image();
   }
 }
 

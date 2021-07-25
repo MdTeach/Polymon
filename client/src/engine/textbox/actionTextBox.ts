@@ -106,6 +106,7 @@ class ActionTextBox {
     seletedText: [number, number],
   ) {
     // inner box actions
+    ctx.font = `bold ${24}px pokemon`;
     const textWidth = 0.3 * innerBoxSize.x;
     const textOffSetX = 0.15 * innerBoxSize.x;
     const textHeight = 0.3 * innerBoxSize.y;
