@@ -23,6 +23,57 @@ class PlayersImgRenderer {
     }
   }
 
+  render_opponent_pokemon_health(
+    statusBarImage: HTMLImageElement,
+    tsize: number,
+    health: number,
+  ) {
+    const ctx = this.ctx;
+    const {height, width} = ctx.canvas;
+
+    let statusX = 0.1 * width;
+    let statusY = 0.05 * height;
+
+    const statusW = 0.35 * width;
+    const statusH = 0.15 * height;
+    const tileX = 0;
+    const tileY = 1.6 * tsize;
+    const tileW = 7 * tsize;
+    const tileH = 2.2 * tsize;
+
+    // draw the heath bar
+    ctx.drawImage(
+      statusBarImage,
+      tileX,
+      tileY,
+      tileW,
+      tileH,
+      statusX,
+      statusY,
+      statusW,
+      statusH,
+    );
+
+    const dx = statusX * 2.58;
+    const dy = statusY * 2.65;
+    const barWidth = width * 0.152;
+    const barHeight = height * 0.013;
+    ctx.fillStyle = '#506860';
+    ctx.fillRect(dx, dy, barWidth, barHeight);
+
+    if (health > 50) {
+      // green color
+      ctx.fillStyle = '#75EDA8';
+    } else if (health > 30) {
+      // yellow color
+      ctx.fillStyle = '#f8e665';
+    } else {
+      // red color
+      ctx.fillStyle = '#d13d24';
+    }
+    ctx.fillRect(dx, dy, (barWidth * health) / 100, barHeight);
+  }
+
   render_user_pokemon_health(
     statusBarImage: HTMLImageElement,
     tsize: number,
@@ -31,8 +82,9 @@ class PlayersImgRenderer {
     const ctx = this.ctx;
     const {height, width} = ctx.canvas;
 
-    const statusX = 0.44 * width;
-    const statusY = 0.48 * height;
+    let statusX = 0.44 * width;
+    let statusY = 0.48 * height;
+
     const statusW = 0.5 * width;
     const statusH = 0.2 * height;
     const tileX = 0;
@@ -67,6 +119,7 @@ class PlayersImgRenderer {
       // yellow color
       ctx.fillStyle = '#f8e665';
     } else {
+      // red color
       ctx.fillStyle = '#d13d24';
     }
     ctx.fillRect(dx, dy, (barWidth * health) / 100, barHeight);

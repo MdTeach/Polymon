@@ -21,11 +21,11 @@ class Pokemon {
   }
 
   render(ctx: CanvasRenderingContext2D, deltaTime: number) {
-    const x = 800;
-    const y = 10;
+    const x = 0.5 * ctx.canvas.width;
+    const y = 0.1 * ctx.canvas.height;
 
     const tsize = this.pokemonInfo.tsize;
-    const scalef = 12;
+    const scalef = ctx.canvas.width * 0.009;
     const scaledVal = tsize * scalef;
     const width = tsize * this.pokemonInfo.width;
     const height = tsize * this.pokemonInfo.height;

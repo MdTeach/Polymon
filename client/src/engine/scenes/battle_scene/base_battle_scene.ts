@@ -126,6 +126,11 @@ class BaseBattleScene extends Scene {
 
     // render the opponet pokemon
     this.pokemon.render(ctx, this.engine.time.delta);
+    this.playerRender.render_opponent_pokemon_health(
+      this.statusBarImage,
+      16,
+      10,
+    );
     this.render_palyer_image();
   }
 }
