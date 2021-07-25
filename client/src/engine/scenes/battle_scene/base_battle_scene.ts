@@ -24,6 +24,7 @@ class BaseBattleScene extends Scene {
   playerTurn = true;
   playerHealth = 100;
   enemyHealth = 100;
+  running = true;
 
   constructor(engine: Engine) {
     super(engine);
@@ -105,14 +106,18 @@ class BaseBattleScene extends Scene {
   }
 
   handle_gameover() {
-    this.playerHealth = this.textActionController.playerHealth;
-    this.enemyHealth = this.textActionController.enemyHealth;
-
     if (this.playerHealth <= 0) {
       // we loose
-      alert('You loosed');
+      setTimeout(() => {
+        this.running = false;
+        alert('You loosed!!');
+      }, 1);
     } else if (this.enemyHealth <= 0) {
-      alert('You won!!');
+      // render the opponet
+      setTimeout(() => {
+        this.running = false;
+        alert('You won!!');
+      }, 1);
     }
   }
 
@@ -131,6 +136,7 @@ class BaseBattleScene extends Scene {
   }
 
   update_scene() {
+    if (!this.running) return;
     if (!this.pokemon) throw new Error('opponent not defined');
     if (!this.enemyPokemon) throw new Error('opponent not defined');
 
@@ -141,8 +147,9 @@ class BaseBattleScene extends Scene {
     ctx.fillStyle = '#F9F8F9';
     ctx.fillRect(0, 0, width, height);
 
-    // handle gameover
-    this.handle_gameover();
+    // get health updates
+    this.playerHealth = this.textActionController.disPlayerHealth;
+    this.enemyHealth = this.textActionController.disEnemyHealth;
 
     // render the tet box and return true if the texbox animation is completed
     this.textActionController.switch_text2action();
@@ -159,6 +166,8 @@ class BaseBattleScene extends Scene {
       this.enemyHealth,
     );
     this.render_palyer_image();
+    // handle gameover
+    this.handle_gameover();
   }
 }
 

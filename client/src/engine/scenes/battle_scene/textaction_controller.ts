@@ -16,6 +16,9 @@ class Controller {
   playerTurn = true;
   playerHealth = 100;
   enemyHealth = 100;
+
+  disPlayerHealth = 100;
+  disEnemyHealth = 100;
   // showPokemon = true;
   showPokemon = false;
 
@@ -46,6 +49,8 @@ class Controller {
       this.engine.time.delta,
     );
     if (this.engine.input._isDown(' ') && request_next_text) {
+      this.disEnemyHealth = this.enemyHealth;
+      this.disPlayerHealth = this.playerHealth;
       if (this.currentText < this.texts.length - 1) {
         this.currentText++;
         this.textBox.reset();
@@ -74,7 +79,7 @@ class Controller {
 
     // update the text
     this.textBox.reset();
-    this.texts = ['.....', `Enemy ${pkmName} used ${actionName} !!!_`];
+    this.texts = [`Enemy ${pkmName} used ${actionName} !!!_`];
 
     //switch to the palyer turn
     this.playerTurn = true;
@@ -140,17 +145,23 @@ class Controller {
       // decrease the  opponent health
       this.texts = [`${pkmName} used ${actionName}_`];
       this.playerTurn = false;
+      this.userActionOption = true;
     }
   }
 
   handle_user_action_option(selectedAction: string) {
     const actionName = BattleConfig.userActions[selectedAction].name;
+    const pkmName = this.pokemon?.pokemonInfo.characterData.name;
     if (selectedAction === '11') {
       // run
       this.texts = [`Running safely_`];
     } else if (selectedAction === '00') {
       // fight
-      this.texts = [`Go pikachu!!! I choose you._`];
+      if (this.playerHealth === 100) {
+        this.texts = [`Go ${pkmName}!!! I choose you._`];
+      } else {
+        this.texts = [`What shall ${pkmName} do ?_`];
+      }
       this.userActionOption = false;
       this.showPokemon = true;
     } else {
