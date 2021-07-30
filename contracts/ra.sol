@@ -14,13 +14,18 @@ contract RedirectAll is SuperAppBase {
     ISuperfluid private _host; // host
     IConstantFlowAgreementV1 private _cfa; // the stored constant flow agreement class address
     ISuperToken private _acceptedToken; // accepted token
+
+    // income splitting
     address private _receiver;
+    address private _musicMaker;
+    address private _graphicsTeam;
+    mapping(address => uint256) _revenueSplit;
 
     uint256 _astartTime;
     uint256 _endblock;
     int96 _aflowRate;
 
-    function setInitalData(uint256 st, int96 fr) internal {
+    function setInitalData(uint256 st, int96 fr) public {
         _astartTime = st;
         _aflowRate = fr;
     }
@@ -55,7 +60,9 @@ contract RedirectAll is SuperAppBase {
         ISuperfluid host,
         IConstantFlowAgreementV1 cfa,
         ISuperToken acceptedToken,
-        address receiver
+        address receiver,
+        address musicMaker,
+        address graphicsTeam
     ) {
         assert(address(host) != address(0));
         assert(address(cfa) != address(0));
@@ -66,7 +73,16 @@ contract RedirectAll is SuperAppBase {
         _host = host;
         _cfa = cfa;
         _acceptedToken = acceptedToken;
+
+        // recipient address
         _receiver = receiver;
+        _musicMaker = musicMaker;
+        _graphicsTeam = graphicsTeam;
+
+        // revenue splitting
+        _revenueSplit[_receiver] = 60;
+        _revenueSplit[_musicMaker] = 20;
+        _revenueSplit[_graphicsTeam] = 20;
 
         uint256 configWord = SuperAppDefinitions.APP_LEVEL_FINAL |
             SuperAppDefinitions.BEFORE_AGREEMENT_CREATED_NOOP |
@@ -149,58 +165,82 @@ contract RedirectAll is SuperAppBase {
         returns (bytes memory newCtx)
     {
         newCtx = ctx;
+        // receivers
+        address[3] memory receivers = [_receiver, _musicMaker, _graphicsTeam];
         // @dev This will give me the new flowRate, as it is called in after callbacks
         int96 netFlowRate = _cfa.getNetFlow(_acceptedToken, address(this));
-        (, int96 outFlowRate, , ) = _cfa.getFlow(
-            _acceptedToken,
-            address(this),
-            _receiver
-        );
+
+        int96 outFlowRate = 0;
+        for (uint256 i = 0; i < 3; i++) {
+            (, int96 _outFlowRate, , ) = _cfa.getFlow(
+                _acceptedToken,
+                address(this),
+                receivers[i]
+            );
+            outFlowRate += _outFlowRate;
+        }
         int96 inFlowRate = netFlowRate + outFlowRate;
         if (inFlowRate < 0) inFlowRate = -inFlowRate; // Fixes issue when inFlowRate is negative
 
         // @dev If inFlowRate === 0, then delete existing flow.
         if (outFlowRate != int96(0)) {
-            (newCtx, ) = _host.callAgreementWithContext(
-                _cfa,
-                abi.encodeWithSelector(
-                    _cfa.updateFlow.selector,
-                    _acceptedToken,
-                    _receiver,
-                    inFlowRate,
-                    new bytes(0) // placeholder
-                ),
-                "0x",
-                newCtx
-            );
+            // flow among the receivers
+            for (uint256 i = 0; i < 3; i++) {
+                address rec = receivers[i];
+                int96 rate = int96(
+                    (uint256(inFlowRate) / 100) * _revenueSplit[rec]
+                );
+                (newCtx, ) = _host.callAgreementWithContext(
+                    _cfa,
+                    abi.encodeWithSelector(
+                        _cfa.updateFlow.selector,
+                        _acceptedToken,
+                        rec,
+                        rate,
+                        new bytes(0) // placeholder
+                    ),
+                    "0x",
+                    newCtx
+                );
+            }
         } else if (inFlowRate == int96(0)) {
             // @dev if inFlowRate is zero, delete outflow.
-            (newCtx, ) = _host.callAgreementWithContext(
-                _cfa,
-                abi.encodeWithSelector(
-                    _cfa.deleteFlow.selector,
-                    _acceptedToken,
-                    address(this),
-                    _receiver,
-                    new bytes(0) // placeholder
-                ),
-                "0x",
-                newCtx
-            );
+            for (uint256 i = 0; i < 3; i++) {
+                address rec = receivers[i];
+                (newCtx, ) = _host.callAgreementWithContext(
+                    _cfa,
+                    abi.encodeWithSelector(
+                        _cfa.deleteFlow.selector,
+                        _acceptedToken,
+                        address(this),
+                        rec,
+                        new bytes(0) // placeholder
+                    ),
+                    "0x",
+                    newCtx
+                );
+            }
         } else {
             // @dev If there is no existing outflow, then create new flow to equal inflow
-            (newCtx, ) = _host.callAgreementWithContext(
-                _cfa,
-                abi.encodeWithSelector(
-                    _cfa.createFlow.selector,
-                    _acceptedToken,
-                    _receiver,
-                    inFlowRate,
-                    new bytes(0) // placeholder
-                ),
-                "0x",
-                newCtx
-            );
+            for (uint256 i = 0; i < 3; i++) {
+                address rec = receivers[i];
+                int96 rate = int96(
+                    (uint256(inFlowRate) / 100) * _revenueSplit[rec]
+                );
+
+                (newCtx, ) = _host.callAgreementWithContext(
+                    _cfa,
+                    abi.encodeWithSelector(
+                        _cfa.createFlow.selector,
+                        _acceptedToken,
+                        rec,
+                        rate,
+                        new bytes(0) // placeholder
+                    ),
+                    "0x",
+                    newCtx
+                );
+            }
         }
     }
 
@@ -246,7 +286,6 @@ contract RedirectAll is SuperAppBase {
     /**************************************************************************
      * SuperApp callbacks
      *************************************************************************/
-
     function afterAgreementCreated(
         ISuperToken _superToken,
         address _agreementClass,
@@ -261,15 +300,8 @@ contract RedirectAll is SuperAppBase {
         onlyHost
         returns (bytes memory newCtx)
     {
-        (uint256 startTime, int96 flowRate, , ) = _cfa.getFlow(
-            _acceptedToken,
-            address(this),
-            _receiver
-        );
-        if (startTime != 0 && flowRate != 0) {
-            setInitalData(startTime, flowRate);
-        }
-
+        // (uint256 startTime,int96 flowRate,,) = _cfa.getFlow(_acceptedToken,_receiver,address(this));
+        // setInitalData(startTime,flowRate);
         return _updateOutflow(_ctx);
     }
 
