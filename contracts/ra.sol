@@ -15,46 +15,18 @@ contract RedirectAll is SuperAppBase {
     IConstantFlowAgreementV1 private _cfa; // the stored constant flow agreement class address
     ISuperToken private _acceptedToken; // accepted token
 
+    struct flowRecord {
+        uint256 startTime;
+        uint256 endTime;
+        int96 flowRate;
+    }
+    mapping(address => flowRecord) public userMaps;
+
     // income splitting
     address private _receiver;
     address private _musicMaker;
     address private _graphicsTeam;
     mapping(address => uint256) _revenueSplit;
-
-    uint256 _astartTime;
-    uint256 _endblock;
-    int96 _aflowRate;
-
-    function setInitalData(uint256 st, int96 fr) public {
-        _astartTime = st;
-        _aflowRate = fr;
-    }
-
-    function setEndTime(uint256 et) internal {
-        _endblock = et;
-    }
-
-    function getLogs()
-        public
-        view
-        returns (
-            uint256,
-            uint256,
-            int96
-        )
-    {
-        return (_astartTime, _endblock, _aflowRate);
-    }
-
-    struct userFlowData {
-        uint256 startTime;
-        uint256 endTime;
-        int96 flowRate;
-        bool endedFlow;
-        bool valid;
-    }
-
-    mapping(address => userFlowData) public userFlowMapping;
 
     constructor(
         ISuperfluid host,
@@ -90,10 +62,6 @@ contract RedirectAll is SuperAppBase {
             SuperAppDefinitions.BEFORE_AGREEMENT_TERMINATED_NOOP;
 
         _host.registerApp(configWord);
-
-        _astartTime = 100;
-        _endblock = 100;
-        _aflowRate = 100;
     }
 
     /**************************************************************************
@@ -116,44 +84,6 @@ contract RedirectAll is SuperAppBase {
                 _receiver
             );
             receiver = _receiver;
-        }
-    }
-
-    function setReceiver() public {
-        if (_receiver != address(0)) {
-            (uint256 startTime, int96 flowRate, , ) = _cfa.getFlow(
-                _acceptedToken,
-                address(this),
-                _receiver
-            );
-            _astartTime = startTime;
-            _aflowRate = flowRate;
-
-            userFlowData memory sFD = userFlowData(
-                startTime,
-                0,
-                flowRate,
-                false,
-                true
-            );
-            userFlowMapping[msg.sender] = sFD;
-        }
-    }
-
-    function endReceiver() public {
-        if (_receiver != address(0)) {
-            // userFlowData memory sFD = userFlowData(startTime,0,flowRate,false);
-            if (userFlowMapping[msg.sender].valid) {
-                (uint256 startTime, int96 flowRate, , ) = _cfa.getFlow(
-                    _acceptedToken,
-                    address(this),
-                    _receiver
-                );
-                _astartTime = startTime;
-                _aflowRate = flowRate;
-                userFlowMapping[msg.sender].endTime = block.timestamp;
-                userFlowMapping[msg.sender].endedFlow = true;
-            }
         }
     }
 
@@ -300,7 +230,14 @@ contract RedirectAll is SuperAppBase {
         onlyHost
         returns (bytes memory newCtx)
     {
-        // (uint256 startTime,int96 flowRate,,) = _cfa.getFlow(_acceptedToken,_receiver,address(this));
+        address customer = _host.decodeCtx(_ctx).msgSender;
+        (uint256 startTime, int96 flowRate, , ) = _cfa.getFlow(
+            _acceptedToken,
+            customer,
+            address(this)
+        );
+        userMaps[customer].startTime = startTime;
+        userMaps[customer].flowRate = flowRate;
         // setInitalData(startTime,flowRate);
         return _updateOutflow(_ctx);
     }
@@ -333,6 +270,8 @@ contract RedirectAll is SuperAppBase {
         // According to the app basic law, we should never revert in a termination callback
         if (!_isSameToken(_superToken) || !_isCFAv1(_agreementClass))
             return _ctx;
+        address customer = _host.decodeCtx(_ctx).msgSender;
+        userMaps[customer].endTime = block.timestamp;
         return _updateOutflow(_ctx);
 
         // return newCtx;
