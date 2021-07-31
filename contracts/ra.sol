@@ -183,7 +183,24 @@ contract RedirectAll is SuperAppBase {
         if (inFlowRate < 0) inFlowRate = -inFlowRate; // Fixes issue when inFlowRate is negative
 
         // @dev If inFlowRate === 0, then delete existing flow.
-        if (outFlowRate != int96(0)) {
+        if (inFlowRate == int96(0)) {
+            // @dev if inFlowRate is zero, delete outflow.
+            for (uint256 i = 0; i < 3; i++) {
+                address rec = receivers[i];
+                (newCtx, ) = _host.callAgreementWithContext(
+                    _cfa,
+                    abi.encodeWithSelector(
+                        _cfa.deleteFlow.selector,
+                        _acceptedToken,
+                        address(this),
+                        rec,
+                        new bytes(0) // placeholder
+                    ),
+                    "0x",
+                    newCtx
+                );
+            }
+        } else if (outFlowRate != int96(0)) {
             // flow among the receivers
             for (uint256 i = 0; i < 3; i++) {
                 address rec = receivers[i];
@@ -197,23 +214,6 @@ contract RedirectAll is SuperAppBase {
                         _acceptedToken,
                         rec,
                         rate,
-                        new bytes(0) // placeholder
-                    ),
-                    "0x",
-                    newCtx
-                );
-            }
-        } else if (inFlowRate == int96(0)) {
-            // @dev if inFlowRate is zero, delete outflow.
-            for (uint256 i = 0; i < 3; i++) {
-                address rec = receivers[i];
-                (newCtx, ) = _host.callAgreementWithContext(
-                    _cfa,
-                    abi.encodeWithSelector(
-                        _cfa.deleteFlow.selector,
-                        _acceptedToken,
-                        address(this),
-                        rec,
                         new bytes(0) // placeholder
                     ),
                     "0x",
@@ -334,6 +334,8 @@ contract RedirectAll is SuperAppBase {
         if (!_isSameToken(_superToken) || !_isCFAv1(_agreementClass))
             return _ctx;
         return _updateOutflow(_ctx);
+
+        // return newCtx;
     }
 
     function _isSameToken(ISuperToken superToken) private view returns (bool) {
