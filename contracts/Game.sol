@@ -1,13 +1,15 @@
 //SPDX-License-Identifier: MIT
-import "@chainlink/contracts/src/v0.7/VRFConsumerBase.sol";
+pragma solidity ^0.7.0;
+pragma experimental ABIEncoderV2;
+
 import "./CashFlow.sol";
 import "./HashCheck.sol";
-
-pragma solidity ^0.7.0;
+import "@chainlink/contracts/src/v0.7/VRFConsumerBase.sol";
 
 contract Game is VRFConsumerBase {
     // hash check
-    HashCheck private hashCheck;
+    HashCheck public hashCheck;
+    TradeableCashflow private cashFlow;
 
     // random number gen
     bytes32 internal keyHash;
@@ -17,15 +19,19 @@ contract Game is VRFConsumerBase {
     // events
     event NumberGenerated(address player, uint256 number);
 
-    constructor(HashCheck _hashCheck)
+    constructor()
         VRFConsumerBase(
             // Matic Test Net
             0x8C7382F9D8f56b33781fE506E897a4F1e2d17255, // VRF Coordinator
             0x326C977E6efc84E512bB9C30f76E30c160eD06FB // LINK Token
         )
     {
+        // super fluid CashFlow
+        cashFlow = TradeableCashflow(
+            0x5A6C83E613B36a045b59139A48dc177B5B3fc657
+        );
         // hash check
-        hashCheck = _hashCheck;
+        hashCheck = HashCheck(0x1faEF324C48355052158302f2032c1f7220803dF);
 
         // chainlink init
         keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
@@ -36,14 +42,34 @@ contract Game is VRFConsumerBase {
     mapping(bytes32 => address) id2users;
     mapping(bytes32 => uint256) id2num;
 
-    function myNumber() public view returns (uint256) {
-        return id2num[users2id[msg.sender]];
+    // ##### Super Flild Query #######
+    function getUserTotalToken(address _player) public view returns (uint256) {
+        return cashFlow.TotalTokensTransfered(_player);
     }
 
-    function handleUserEnter() public {
+    // ####### Game Logic ##########
+    function requestUserEnter() public {
         bytes32 reqId = getRandomNumber();
         users2id[msg.sender] = reqId;
         id2users[reqId] = msg.sender;
+    }
+
+    function requestPkmCatch() public view returns (uint256) {
+        address _player = msg.sender;
+
+        // Get streamflow info from the sf
+        uint256 token = getUserTotalToken(_player);
+        uint256 userNum = id2num[users2id[_player]];
+
+        // Check hash
+        // return token;
+        bool isValid = hashCheck.validate(token, userNum);
+        if (isValid) return 1;
+        return 0;
+    }
+
+    function myNumber() public view returns (uint256) {
+        return id2num[users2id[msg.sender]];
     }
 
     // ########## VRF Code ###################
@@ -65,6 +91,7 @@ contract Game is VRFConsumerBase {
         emit NumberGenerated(id2users[requestId], number);
     }
 
+    // temp
     function withdrawLink() external {
         require(
             LINK.transfer(msg.sender, LINK.balanceOf(address(this))),

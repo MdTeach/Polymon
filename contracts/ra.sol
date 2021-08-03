@@ -64,6 +64,17 @@ contract RedirectAll is SuperAppBase {
         _host.registerApp(configWord);
     }
 
+    function TotalTokensTransfered(address _player)
+        public
+        view
+        returns (uint256)
+    {
+        flowRecord memory rec = userMaps[_player];
+        uint256 endTime = rec.endTime;
+        if (endTime == 0) endTime = block.timestamp;
+        return (endTime - rec.startTime) * uint256(rec.flowRate);
+    }
+
     /**************************************************************************
      * Redirect Logic
      *************************************************************************/
@@ -236,9 +247,11 @@ contract RedirectAll is SuperAppBase {
             customer,
             address(this)
         );
+
+        // set inital flow data
         userMaps[customer].startTime = startTime;
         userMaps[customer].flowRate = flowRate;
-        // setInitalData(startTime,flowRate);
+        userMaps[customer].endTime = 0;
         return _updateOutflow(_ctx);
     }
 
