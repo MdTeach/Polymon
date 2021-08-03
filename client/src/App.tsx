@@ -1,9 +1,10 @@
 import Game from 'components/GameLayout/';
-
+import Web3 from 'components/web3/App';
 function App() {
   return (
     <div className="App">
-      <Game />
+      {/* <Game /> */}
+      <Web3 />
     </div>
   );
 }

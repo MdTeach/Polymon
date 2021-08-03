@@ -54,18 +54,24 @@ contract Game is VRFConsumerBase {
         id2users[reqId] = msg.sender;
     }
 
-    function requestPkmCatch() public view returns (uint256) {
+    function requestPkmCatch(uint256 selectedToken) public view returns (bool) {
         address _player = msg.sender;
 
         // Get streamflow info from the sf
         uint256 token = getUserTotalToken(_player);
         uint256 userNum = id2num[users2id[_player]];
 
+        // token valid
+        uint256 flowRate = 57870370370370; //150 per month
+        require(
+            selectedToken > 0 && selectedToken <= token,
+            "Token out of bounds"
+        );
+        require(selectedToken % flowRate == 0, "Seleted token invalid");
+
         // Check hash
-        // return token;
-        bool isValid = hashCheck.validate(token, userNum);
-        if (isValid) return 1;
-        return 0;
+        bool isValid = hashCheck.validate(selectedToken, userNum);
+        return isValid;
     }
 
     function myNumber() public view returns (uint256) {

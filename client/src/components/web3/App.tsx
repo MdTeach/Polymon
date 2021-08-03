@@ -28,7 +28,7 @@ const sf = new SuperfluidSDK.Framework({
 });
 const crypt = new Crypt(web3);
 
-const randomNum = 201;
+const randomNum = 8104;
 const puzzleChar = 'f';
 
 function App() {
@@ -37,10 +37,10 @@ function App() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [user, setUser] = useState<any>();
   // const flowRate = 3858024635802;
-  const flowRate = 1000000000000000 * 5;
+  const flowRate = 57870370370370; //150 permonth
   const ctr = useRef(0);
   const id = useRef<any>(null);
-  const receipt = '0xFa07f13DB01e224738af1A16B34d58294049d942';
+  const receipt = '0x5A6C83E613B36a045b59139A48dc177B5B3fc657';
   const handleFlow = async () => {
     await user.flow({
       recipient: receipt,
@@ -62,7 +62,7 @@ function App() {
   useEffect(() => {
     (async () => {
       // const [acc] = await web3.eth.getAccounts();
-      const acc = '0x8db7C7ed6403e26445843855D86834014500D4D7';
+      const acc = '0xafe0DA2BDBc38A2376C7b775e784075523d3C1AC';
       setAcc(acc);
       console.log('Accountds loaded');
       await sf.initialize();
