@@ -8,10 +8,13 @@ async function main() {
   const Game = await ethers.getContractFactory("Game");
   const CashFlow = await ethers.getContractFactory("TradeableCashflow");
 
-  const token = await Token.deploy();
   const hashCheck = await HashCheck.deploy();
+  const game = await Game.deploy();
+  const cashFlow = await CashFlow.deploy();
 
-  console.log("Token address:", token.address);
+  console.log("hash check", hashCheck.address);
+  console.log("game deployed at", game.address);
+  console.log("cash flow", cashFlow.address);
 }
 
 main()
