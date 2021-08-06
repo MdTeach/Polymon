@@ -1,0 +1,11 @@
+.container {
+  width: 60%;
+  padding: 1em;
+  margin-left: 10%;
+}
+
+.uploadFile {
+  text-align: 'left';
+  color: #96969a;
+  margin: 16px 0;
+}

@@ -4,6 +4,8 @@
 	"private": true,
 	"dependencies": {
 		"@ethersproject/contracts": "^5.4.0",
+		"@material-ui/core": "^4.12.3",
+		"@material-ui/icons": "^4.11.2",
 		"@portis/web3": "^4.0.5",
 		"@superfluid-finance/js-sdk": "^0.4.4",
 		"@testing-library/jest-dom": "^5.11.4",
