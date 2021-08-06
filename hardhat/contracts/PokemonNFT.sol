@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@chainlink/contracts/src/v0.7/VRFConsumerBase.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract PokemonNFT is VRFConsumerBase, ERC721 {
     // random number gen
@@ -41,14 +41,17 @@ contract PokemonNFT is VRFConsumerBase, ERC721 {
     // #### HANDLE MINT ####
     function MintPokemon(uint256 nameIdx) public {
         uint256 randomNum = 10;
+        uint256 pkmType = 1;
         uint256 attack = 65 + (randomNum % 35);
         uint256 defence = 65 + ((randomNum + attack) % 35);
 
-        uint256 pkmType = 1;
-        uint256 attack0 = 0;
-        uint256 attack1 = 0;
-        uint256 attack2 = 0;
-        uint256 attack3 = 0;
+        uint256 ar1 = randomNum % 5;
+        uint256 ar2 = attack % 5;
+
+        uint256 attack0 = pkmType * 5 + ar1;
+        uint256 attack1 = pkmType * 5 + ar2;
+        uint256 attack2 = 20 + ar1;
+        uint256 attack3 = 20 + ar2;
 
         _safeMint(msg.sender, tokenCounter);
         PokemonData memory pkmData = PokemonData({

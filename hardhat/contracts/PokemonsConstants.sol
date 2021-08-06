@@ -29,5 +29,45 @@ contract PokemonsConstants {
         [11, 12, 12, 12, 10]
     ];
 
+    // attacks part
+    struct attack {
+        string name;
+        uint256 attackType;
+        uint256 hit;
+    }
+
+    attack[] attacks = [
+        // Electric Attacks
+        attack("Spark", 0, 15),
+        attack("Thunder Shock", 0, 18),
+        attack("Shock Wave", 0, 22),
+        attack("Bolt Attack", 0, 25),
+        attack("Thunder", 0, 25),
+        // Water Attacks
+        attack("Water Gun", 1, 13),
+        attack("Bubble Beam", 1, 15),
+        attack("Muddy Water", 1, 20),
+        attack("Surf", 1, 24),
+        attack("Hydropump", 1, 28),
+        // Fire Attacks
+        attack("Ember", 2, 15),
+        attack("Flame Wheel", 2, 20),
+        attack("Flame Thrower", 2, 22),
+        attack("Fire Blast", 2, 28),
+        attack("Eruption", 2, 30),
+        // Grass Attacks
+        attack("Rajor Leaf", 3, 14),
+        attack("Bullet Seed", 3, 17),
+        attack("Leaf Blade", 3, 22),
+        attack("Leaf Strom", 3, 25),
+        attack("Frenzy Plant", 3, 28),
+        // Normal Attacks
+        attack("Tackle", 0, 12),
+        attack("Quick Attack", 0, 18),
+        attack("Swift", 0, 22),
+        attack("Slash", 0, 26),
+        attack("Extreme Speed", 0, 28)
+    ];
+
     constructor() {}
 }
