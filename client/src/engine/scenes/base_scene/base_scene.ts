@@ -24,8 +24,12 @@ class BaseScene extends Scene {
   // pokemon on enter grass
   async pokemon_on_enter_grass() {
     if (!this.player) throw new Error('Player not loaded');
+    if (!this.baseMap) throw new Error('Map not loaded');
     if (
-      this.checkLocationEvent(this.player.position, 4) &&
+      this.checkLocationEvent(
+        this.player.position,
+        this.baseMap.tileData.catchArea,
+      ) &&
       this.player.isMoving
     ) {
       if (Math.random() < 0.01) {
@@ -65,6 +69,11 @@ class BaseScene extends Scene {
   async start_scene() {
     this.player = await getPlayer(this, {x: 0, y: 0}, PlayerSprite);
     this.baseMap = await loadMap(CrystalTileSprite, CrystalTileData);
+
+    // music start
+    if (!this.baseMap) throw new Error('Basemap not inited');
+    this.engine.audioPlayer.play(this.baseMap?.tileData.music);
+
     this.camera = new Camera(
       this.engine.ctx,
       engineConfig.camera,
@@ -89,7 +98,7 @@ class BaseScene extends Scene {
     if (!this.camera) throw new Error('Camera not inited');
 
     this.player.update();
-    this.pokemon_on_enter_grass();
+    // this.pokemon_on_enter_grass();
     this.camera.follow(this.player);
 
     this.camera.renderMap(this.baseMap);

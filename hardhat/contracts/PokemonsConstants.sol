@@ -1,5 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
+pragma experimental ABIEncoderV2;
 
 contract PokemonsConstants {
     // Names of pokemon to be minted
@@ -36,38 +37,43 @@ contract PokemonsConstants {
         uint256 hit;
     }
 
-    attack[] attacks = [
-        // Electric Attacks
-        attack("Spark", 0, 15),
-        attack("Thunder Shock", 0, 18),
-        attack("Shock Wave", 0, 22),
-        attack("Bolt Attack", 0, 25),
-        attack("Thunder", 0, 25),
-        // Water Attacks
-        attack("Water Gun", 1, 13),
-        attack("Bubble Beam", 1, 15),
-        attack("Muddy Water", 1, 20),
-        attack("Surf", 1, 24),
-        attack("Hydropump", 1, 28),
-        // Fire Attacks
-        attack("Ember", 2, 15),
-        attack("Flame Wheel", 2, 20),
-        attack("Flame Thrower", 2, 22),
-        attack("Fire Blast", 2, 28),
-        attack("Eruption", 2, 30),
-        // Grass Attacks
-        attack("Rajor Leaf", 3, 14),
-        attack("Bullet Seed", 3, 17),
-        attack("Leaf Blade", 3, 22),
-        attack("Leaf Strom", 3, 25),
-        attack("Frenzy Plant", 3, 28),
-        // Normal Attacks
-        attack("Tackle", 0, 12),
-        attack("Quick Attack", 0, 18),
-        attack("Swift", 0, 22),
-        attack("Slash", 0, 26),
-        attack("Extreme Speed", 0, 28)
-    ];
+    attack[25] attacks;
 
-    constructor() {}
+    constructor() {
+        // Electric Attacks
+        attacks[0] = attack("Spark", 0, 15);
+        attacks[1] = attack("Thunder Shock", 0, 18);
+        attacks[2] = attack("Shock Wave", 0, 22);
+        attacks[3] = attack("Bolt Attack", 0, 25);
+        attacks[4] = attack("Thunder", 0, 25);
+        // Water Attacks
+        attacks[5] = attack("Water Gun", 1, 13);
+        attacks[6] = attack("Bubble Beam", 1, 15);
+        attacks[7] = attack("Muddy Water", 1, 20);
+        attacks[8] = attack("Surf", 1, 24);
+        attacks[9] = attack("Hydropump", 1, 28);
+        // Fire Attacks
+        attacks[10] = attack("Ember", 2, 15);
+        attacks[11] = attack("Flame Wheel", 2, 20);
+        attacks[12] = attack("Flame Thrower", 2, 22);
+        attacks[13] = attack("Fire Blast", 2, 28);
+        attacks[14] = attack("Eruption", 2, 30);
+        // Grass Attacks
+        attacks[15] = attack("Rajor Leaf", 3, 14);
+        attacks[16] = attack("Bullet Seed", 3, 17);
+        attacks[17] = attack("Leaf Blade", 3, 22);
+        attacks[18] = attack("Leaf Strom", 3, 25);
+        attacks[19] = attack("Frenzy Plant", 3, 28);
+        // Normal Attacks
+        attacks[20] = attack("Tackle", 0, 12);
+        attacks[21] = attack("Quick Attack", 0, 18);
+        attacks[22] = attack("Swift", 0, 22);
+        attacks[23] = attack("Slash", 0, 26);
+        attacks[24] = attack("Extreme Speed", 0, 28);
+    }
+
+    function getAttack(uint256 idx) public view returns (attack memory) {
+        require(idx >= 0 && idx < 25, "Index out of bounds");
+        return attacks[idx];
+    }
 }

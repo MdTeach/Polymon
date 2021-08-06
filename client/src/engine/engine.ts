@@ -1,5 +1,6 @@
 import {Camera} from 'engine/camera/camera';
 import Scene from './scenes/scene';
+import AudioPlayer from './audio/AudioPlayer';
 import {getBaseScene} from './scenes/base_scene/base_scene';
 import {getBattleScene} from './scenes/battle_scene/base_battle_scene';
 
@@ -10,7 +11,7 @@ class Engine {
   camera: Camera | undefined;
   secene: Scene | undefined;
   pausedScene: Scene | undefined;
-
+  audioPlayer: AudioPlayer;
   time = {
     now: 10,
     lastFrame: 0,
@@ -59,11 +60,16 @@ class Engine {
     document.addEventListener('keyup', (e) => {
       this.input._onKeyUp(e);
     });
+
+    // init audio player
+    this.audioPlayer = new AudioPlayer();
   }
 
   // switch between two scenes
   switchScene(currentScene: Scene, newScene: Scene) {
-    //
+    //pause the audio
+    this.audioPlayer.stop();
+
     this.pausedScene = currentScene;
     this.secene = newScene;
   }
@@ -94,8 +100,8 @@ class Engine {
     this.ctx.canvas.width = document.documentElement.clientWidth;
     this.ctx.imageSmoothingEnabled = false;
 
-    // this.secene = await getBaseScene(this);
-    this.secene = await getBattleScene(this);
+    this.secene = await getBaseScene(this);
+    // this.secene = await getBattleScene(this);
     await this.secene.start_scene();
 
     if (loop) this.update();

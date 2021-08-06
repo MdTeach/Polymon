@@ -6,6 +6,8 @@ interface TileData {
   tileMapCols: number;
   tileMapRows: number;
   colliders: number[];
+  catchArea: number;
+  music: string;
 }
 
 export {TileData};

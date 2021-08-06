@@ -24,8 +24,9 @@ const CrystalBase: TileData = {
     4, 4, 4, 4, 4, 4, 4, 4, 2, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
     2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
   ],
-
   colliders: [2, 3, 7],
+  catchArea: 4,
+  music: 'https://ipfs.io/ipfs/QmUv6ZhZjfagXtpoEs92y9PxPh9eJ2SDgJjCGBQEDFXmRQ',
 };
 
 export default CrystalBase;
