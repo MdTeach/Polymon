@@ -16,8 +16,8 @@ const web3 = (): Promise<Web3> => {
         const web3 = new Web3(window.ethereum);
         try {
           await window.ethereum.enable();
-          const id: number = await web3.eth.net.getId();
-          if (id !== 4) reject(new Error('Invalid network id'));
+          // const id: number = await web3.eth.net.getId();
+          // if (id !== 4) reject(new Error('Invalid network id'));
           resolve(web3);
         } catch (error) {
           reject(error);
@@ -25,9 +25,9 @@ const web3 = (): Promise<Web3> => {
       } else if (window.web3) {
         // Use metamask provider
         const web3 = window.web3;
-        console.log('Injected web3 detected.');
-        const id: number = await web3.eth.net.getId();
-        if (id !== 4) reject(new Error('Invalid network id'));
+        // console.log('Injected web3 detected.');
+        // const id: number = await web3.eth.net.getId();
+        // if (id !== 4) reject(new Error('Invalid network id'));
 
         resolve(web3);
       } else {

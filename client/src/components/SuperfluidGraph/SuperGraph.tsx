@@ -1,34 +1,38 @@
 import axios from 'axios';
 import {useEffect} from 'react';
 import StreamComponent from './StreamComponent';
-const myAcc = '0xb651D9b48020fa9C02Aa722c3ADb3cF0c4bb5146';
-
+let myAcc = '0xA72329b10448cB5e81B81b1AeEC8c1EAfB939951';
+myAcc = myAcc.toLowerCase();
 const App = () => {
   const start = async () => {
     // GrapgQL
     const QUERY_URL =
-      'https://thegraph.com/explorer/subgraph/superfluid-finance/superfluid-mumbai';
+      'https://api.thegraph.com/subgraphs/name/superfluid-finance/superfluid-mumbai';
+
     const query = `{
-			account(id: "0xafe0DA2BDBc38A2376C7b775e784075523d3C1AC") {
-				flowOwned {
+			account(id: "${myAcc}") {
+				flowsReceived {
 					flowRate
-					sum
-					lastUpdated
-					token {
-						id
-						symbol
-					}
+          owner{
+            id
+          }
 				}
+        flowsOwned{
+          flowRate
+          recipient{
+            id
+          }
+        }
 			}
 		}
 	`;
     const result = await axios.post(QUERY_URL, {query});
-    console.log('result ', result);
+    console.log('result ', result.data.data);
   };
 
   useEffect(() => {
     (() => {
-      //   start();
+      start();
     })();
   }, []);
 
