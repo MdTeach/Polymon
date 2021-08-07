@@ -16,6 +16,8 @@ contract RedirectAll is SuperAppBase {
         uint256 endTime;
         int96 flowRate;
     }
+
+    // keep the track of user flows
     mapping(address => flowRecord) public userMaps;
 
     // income splitting
@@ -75,26 +77,7 @@ contract RedirectAll is SuperAppBase {
      * Redirect Logic
      *************************************************************************/
 
-    function currentReceiver()
-        external
-        view
-        returns (
-            uint256 startTime,
-            address receiver,
-            int96 flowRate
-        )
-    {
-        if (_receiver != address(0)) {
-            (startTime, flowRate, , ) = _cfa.getFlow(
-                _acceptedToken,
-                address(this),
-                _receiver
-            );
-            receiver = _receiver;
-        }
-    }
-
-    event ReceiverChanged(address receiver); //what is this?
+    // event ReceiverChanged(address receiver); //what is this?
 
     /// @dev If a new stream is opened, or an existing one is opened
     function _updateOutflow(bytes calldata ctx)
@@ -179,45 +162,6 @@ contract RedirectAll is SuperAppBase {
                 );
             }
         }
-    }
-
-    // @dev Change the Receiver of the total flow
-    function _changeReceiver(address newReceiver) internal {
-        require(newReceiver != address(0), "New receiver is zero address");
-        // @dev because our app is registered as final, we can't take downstream apps
-        require(
-            !_host.isApp(ISuperApp(newReceiver)),
-            "New receiver can not be a superApp"
-        );
-        if (newReceiver == _receiver) return;
-        // @dev delete flow to old receiver
-        _host.callAgreement(
-            _cfa,
-            abi.encodeWithSelector(
-                _cfa.deleteFlow.selector,
-                _acceptedToken,
-                address(this),
-                _receiver,
-                new bytes(0)
-            ),
-            "0x"
-        );
-        // @dev create flow to new receiver
-        _host.callAgreement(
-            _cfa,
-            abi.encodeWithSelector(
-                _cfa.createFlow.selector,
-                _acceptedToken,
-                newReceiver,
-                _cfa.getNetFlow(_acceptedToken, address(this)),
-                new bytes(0)
-            ),
-            "0x"
-        );
-        // @dev set global receiver to new receiver
-        _receiver = newReceiver;
-
-        emit ReceiverChanged(_receiver);
     }
 
     /**************************************************************************
