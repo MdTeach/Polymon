@@ -1,16 +1,28 @@
 import axios from 'axios';
 import {useEffect} from 'react';
 import StreamComponent from './StreamComponent';
-let myAcc = '0xA72329b10448cB5e81B81b1AeEC8c1EAfB939951';
-myAcc = myAcc.toLowerCase();
+import Loading from 'components/helpers/loading';
+import {useState} from 'react';
+
+let contractAddrs = '0x9750A27877BF4A2993b26921b53584Eb4c673618';
+contractAddrs = contractAddrs.toLowerCase();
 const App = () => {
-  const start = async () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [playerAddr, setPlayerAddrs] = useState('0x0');
+  const [ownAddr, setOwnAddrs] = useState('0x0');
+  const [musicAddr, setMusicAddrs] = useState('0x0');
+  const [graphAddr, setGraphAddrs] = useState('0x0');
+  const [ownerRate, setOwnerRate] = useState(0);
+  const [creatorRate, setCreatorRates] = useState(0);
+  const [inRates, setInRate] = useState(0);
+
+  const fetchData = async () => {
     // GrapgQL
     const QUERY_URL =
       'https://api.thegraph.com/subgraphs/name/superfluid-finance/superfluid-mumbai';
 
     const query = `{
-			account(id: "${myAcc}") {
+			account(id: "${contractAddrs}") {
 				flowsReceived {
 					flowRate
           owner{
@@ -27,14 +39,39 @@ const App = () => {
 		}
 	`;
     const result = await axios.post(QUERY_URL, {query});
-    console.log('result ', result.data.data);
+    console.log(result);
+
+    const acc = result.data.data.account;
+
+    const player = acc.flowsReceived[0].owner.id;
+    const flowIn = acc.flowsReceived[0].flowRate;
+
+    const graphics = acc.flowsOwned[0].recipient.id;
+    const music = acc.flowsOwned[1].recipient.id;
+    const owner = acc.flowsOwned[2].recipient.id;
+
+    const creatorRate = acc.flowsOwned[0].flowRate;
+    const ownerRate = acc.flowsOwned[2].flowRate;
+
+    setInRate(flowIn);
+    setPlayerAddrs(player);
+    setGraphAddrs(graphics);
+    setMusicAddrs(music);
+    setOwnAddrs(owner);
+    setCreatorRates(creatorRate);
+    setOwnerRate(ownerRate);
   };
 
   useEffect(() => {
-    (() => {
-      start();
+    (async () => {
+      await fetchData();
+      setIsLoading(false);
     })();
   }, []);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div
@@ -46,38 +83,38 @@ const App = () => {
 
         textAlign: 'center',
       }}>
-      <div style={{marginLeft: '2em'}}>
+      <div style={{marginLeft: '5em'}}>
         <h2 style={{color: 'gray', padding: '1em', textAlign: 'left'}}>
-          Contract Flow on the MapContract
-          0xafe0DA2BDBc38A2376C7b775e784075523d3C1AC
+          Realtime Contract Flow on the SuperContract:
+          {' ' + contractAddrs}
         </h2>
         <StreamComponent
           title={'1) From Player to Contract'}
           inflow={true}
-          rate={3500}
-          acc1={'0xafe0DA2BDBc38A2376C7b775e784075523d3C1AC'}
-          acc2={'0xafe0DA2BDBc38A2376C7b775e784075523d3C1AC'}
+          rate={inRates}
+          acc1={playerAddr}
+          acc2={contractAddrs}
         />
         <StreamComponent
           title={'2) From Contract to MapOwner'}
           inflow={false}
-          rate={3500}
-          acc1={'0xafe0DA2BDBc38A2376C7b775e784075523d3C1AC'}
-          acc2={'0xafe0DA2BDBc38A2376C7b775e784075523d3C1AC'}
+          rate={ownerRate}
+          acc1={contractAddrs}
+          acc2={ownAddr}
         />
         <StreamComponent
           title={'3) From Contract to MusicOwner'}
           inflow={false}
-          rate={3500}
-          acc1={'0xafe0DA2BDBc38A2376C7b775e784075523d3C1AC'}
-          acc2={'0xafe0DA2BDBc38A2376C7b775e784075523d3C1AC'}
+          rate={creatorRate}
+          acc1={contractAddrs}
+          acc2={musicAddr}
         />
         <StreamComponent
           title={'4) From Contract to GraphicOwner'}
           inflow={false}
-          rate={3500}
-          acc1={'0xafe0DA2BDBc38A2376C7b775e784075523d3C1AC'}
-          acc2={'0xafe0DA2BDBc38A2376C7b775e784075523d3C1AC'}
+          rate={creatorRate}
+          acc1={contractAddrs}
+          acc2={graphAddr}
         />
       </div>
     </div>

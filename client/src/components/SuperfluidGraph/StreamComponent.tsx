@@ -43,7 +43,7 @@ const App = ({
   acc2: string;
 }) => {
   return (
-    <div style={{width: '800px', backgroundColor: '#f8fafc', padding: '1em'}}>
+    <div style={{width: '850px', backgroundColor: '#f8fafc', padding: '1em'}}>
       <div
         style={{
           color: '#9da1a5',
