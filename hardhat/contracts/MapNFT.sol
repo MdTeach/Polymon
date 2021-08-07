@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "./CashFlow.sol";
+import {ERC721} from "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.2.0-solc-0.7/contracts/token/ERC721/ERC721.sol";
 
 contract PokeMap is ERC721 {
     uint256 public tokenCounter;
