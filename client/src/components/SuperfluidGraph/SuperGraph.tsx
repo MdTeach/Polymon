@@ -2,12 +2,14 @@ import axios from 'axios';
 import {useEffect} from 'react';
 import StreamComponent from './StreamComponent';
 import Loading from 'components/helpers/loading';
+import Alert from '@material-ui/lab/Alert';
 import {useState} from 'react';
 
-let contractAddrs = '0x9750A27877BF4A2993b26921b53584Eb4c673618';
+let contractAddrs = '0xD52380cfC9B44Cd6207D6191f392de635760DE1E';
 contractAddrs = contractAddrs.toLowerCase();
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isFailed, setIsFailed] = useState(false);
   const [playerAddr, setPlayerAddrs] = useState('0x0');
   const [ownAddr, setOwnAddrs] = useState('0x0');
   const [musicAddr, setMusicAddrs] = useState('0x0');
@@ -42,9 +44,22 @@ const App = () => {
     console.log(result);
 
     const acc = result.data.data.account;
+    if (!acc) {
+      setIsFailed(true);
+      setIsLoading(false);
+      return;
+    }
 
     const player = acc.flowsReceived[0].owner.id;
     const flowIn = acc.flowsReceived[0].flowRate;
+
+    console.log('flow in was', flowIn);
+
+    if (flowIn === '0') {
+      setIsFailed(true);
+      setIsLoading(false);
+      return;
+    }
 
     const graphics = acc.flowsOwned[0].recipient.id;
     const music = acc.flowsOwned[1].recipient.id;
@@ -60,17 +75,33 @@ const App = () => {
     setOwnAddrs(owner);
     setCreatorRates(creatorRate);
     setOwnerRate(ownerRate);
+    setIsLoading(false);
+    setIsFailed(false);
   };
 
   useEffect(() => {
     (async () => {
       await fetchData();
-      setIsLoading(false);
+      setInterval(async () => {
+        await fetchData();
+      }, 5000);
     })();
-  }, []);
+  }, [0]);
 
   if (isLoading) {
     return <Loading />;
+  }
+
+  if (isFailed) {
+    return (
+      <div>
+        <Alert
+          severity="warning"
+          style={{fontSize: '28px', fontWeight: 'bold'}}>
+          No active flow found on {contractAddrs}
+        </Alert>
+      </div>
+    );
   }
 
   return (
