@@ -1,5 +1,4 @@
 import {create} from 'ipfs-http-client';
-// import MetaDataType from './MetaData';
 
 const ipfs = create({
   host: 'ipfs.infura.io',
@@ -18,7 +17,6 @@ const ipfs = create({
 // };
 
 const uploadToIPFS = async (data: any) => {
-  //   const imgBuffer = Buffer.from(image_base64, 'base64');
   try {
     const {path} = await ipfs.add(data);
     return [path, null];
