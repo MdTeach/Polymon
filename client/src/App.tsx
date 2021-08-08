@@ -35,9 +35,9 @@ function App() {
           account,
         }}>
         {/* <BuildMapLayout /> */}
-        {/* <Game /> */}
+        <Game />
         {/* <Web3 /> */}
-        <SuperGraph />
+        {/* <SuperGraph /> */}
       </Web3Context.Provider>
     </div>
   );

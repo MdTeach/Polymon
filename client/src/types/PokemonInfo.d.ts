@@ -1,7 +1,6 @@
 import CharacterData from './CharacterData';
 
-interface PokemonInfo {
-  spriteSrc: string;
+interface SpriteData {
   tsize: number;
   noAnimations: number;
   enemyFacingTile: [number, number];
@@ -10,6 +9,12 @@ interface PokemonInfo {
   width: number;
   height: number;
   tileOffsets: [number, number];
+}
+
+interface PokemonInfo {
+  spriteSrc: string;
+  spriteData: SpriteData;
   characterData: CharacterData;
 }
 export default PokemonInfo;
+export {SpriteData};

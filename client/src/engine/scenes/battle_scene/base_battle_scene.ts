@@ -4,12 +4,12 @@ import TextBox from 'engine/textbox/textbox';
 import Pokemon from 'engine/pokemon/Pokemon';
 import Scene from '../scene';
 import PlayerImage from 'assets/battle_view/battle_player.png';
-import PikajuImage from 'assets/pokemons/01_Pikaju.png';
 import BattleBarImage from 'assets/battle_view/battle_bar.png';
 import PokemonInfo from 'types/PokemonInfo';
-import PikajuData from 'character_data/pikaju_data';
 import TextActionController from './textaction_controller';
 import PlayersImgRenderer from './battle_players_renderer';
+
+import {loadSpriteData, getPkmImage, getCharacterData} from './load_pokemon';
 
 class BaseBattleScene extends Scene {
   playerImage: HTMLImageElement;
@@ -73,18 +73,17 @@ class BaseBattleScene extends Scene {
   }
 
   async getPokemon() {
-    const pikajuInfo: PokemonInfo = {
-      spriteSrc: PikajuImage,
-      tsize: 16,
-      enemyFacingTile: [14.8, 0.5],
-      enemyFacingSize: [3, 3],
-      userFacingPos: [0, 1],
-      noAnimations: 6,
-      width: 2.4,
-      height: 2.4,
-      tileOffsets: [0.19, 0],
+    // const
+    // const pkmName = 'pikaju';
+    const pkmName = 'blastoise';
+    const _spriteData = loadSpriteData(pkmName);
+    const _pkmImage = getPkmImage(pkmName);
+    const _characterData = await getCharacterData();
 
-      characterData: PikajuData,
+    const pikajuInfo: PokemonInfo = {
+      spriteSrc: _pkmImage,
+      spriteData: _spriteData,
+      characterData: _characterData,
     };
 
     const pokemon = new Pokemon(pikajuInfo);

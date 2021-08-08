@@ -24,14 +24,14 @@ class Pokemon {
     const x = 0.5 * ctx.canvas.width;
     const y = 0.1 * ctx.canvas.height;
 
-    const tsize = this.pokemonInfo.tsize;
+    const tsize = this.pokemonInfo.spriteData.tsize;
     const scalef = ctx.canvas.width * 0.009;
     const scaledVal = tsize * scalef;
-    const width = tsize * this.pokemonInfo.width;
-    const height = tsize * this.pokemonInfo.height;
+    const width = tsize * this.pokemonInfo.spriteData.width;
+    const height = tsize * this.pokemonInfo.spriteData.height;
 
-    let [tileX, tileY] = this.pokemonInfo.userFacingPos;
-    let [offSetX, offSetY] = this.pokemonInfo.tileOffsets;
+    let [tileX, tileY] = this.pokemonInfo.spriteData.userFacingPos;
+    let [offSetX, offSetY] = this.pokemonInfo.spriteData.tileOffsets;
     tileY *= tsize;
     tileX *= tsize;
     tileX += offSetX * tsize;
@@ -64,9 +64,9 @@ class Pokemon {
   ) {
     // enemyFacingTile: [14.8, 0.5],
     //   enemyFacingSize: [3, 3],
-    const tsize = this.pokemonInfo.tsize;
-    const [tileX, tileY] = this.pokemonInfo.enemyFacingTile;
-    const [tsizeX, tsizeY] = this.pokemonInfo.enemyFacingSize;
+    const tsize = this.pokemonInfo.spriteData.tsize;
+    const [tileX, tileY] = this.pokemonInfo.spriteData.enemyFacingTile;
+    const [tsizeX, tsizeY] = this.pokemonInfo.spriteData.enemyFacingSize;
 
     ctx.drawImage(
       this.sprite,
@@ -82,7 +82,7 @@ class Pokemon {
   }
 
   animation_update(deltaTime: number) {
-    if (this.frameCounter < this.pokemonInfo.noAnimations) {
+    if (this.frameCounter < this.pokemonInfo.spriteData.noAnimations) {
       this.frameCounter += deltaTime;
       // change the sprite for animation
       if (this.frameCounter >= this.aimationSpeed) {
@@ -91,7 +91,7 @@ class Pokemon {
         console.log(this.currentTile);
 
         // check end animation
-        if (this.currentTile >= this.pokemonInfo.noAnimations) {
+        if (this.currentTile >= this.pokemonInfo.spriteData.noAnimations) {
           this.animating = false;
           return true;
         }
