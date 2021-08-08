@@ -4,6 +4,8 @@ import BuildMapLayout from 'components/BuildMap/BuildMapLayout';
 import SuperGraph from 'components/SuperfluidGraph/SuperGraph';
 import Home from 'components/Home/Home';
 
+import {BrowserRouter, Route, Switch} from 'react-router-dom';
+
 import useWeb3 from 'hooks/web3';
 import Web3Context from './contexts/Web3Context';
 import Loading from 'components/helpers/loading';
@@ -29,19 +31,29 @@ function App() {
     return <Loading />;
   }
   return (
-    <div className="App">
-      <Web3Context.Provider
-        value={{
-          web3,
-          account,
-        }}>
-        {/* <BuildMapLayout /> */}
-        {/* <Game /> */}
-        {/* <Web3 /> */}
-        {/* <SuperGraph /> */}
-        <Home />
-      </Web3Context.Provider>
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        <Web3Context.Provider
+          value={{
+            web3,
+            account,
+          }}>
+          <Switch>
+            <Route exact path="/newMap">
+              <BuildMapLayout />
+            </Route>
+            <Route exact path="/">
+              <Home />
+            </Route>
+            <Route exact path="/graph">
+              <SuperGraph />
+            </Route>
+          </Switch>
+          {/* <Game /> */}
+          {/* <Web3 /> */}
+        </Web3Context.Provider>
+      </div>
+    </BrowserRouter>
   );
 }
 

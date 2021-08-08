@@ -117,8 +117,11 @@ const App = () => {
       <div style={{marginLeft: '5em'}}>
         <h2 style={{color: 'gray', padding: '1em', textAlign: 'left'}}>
           Realtime Contract Flow on the SuperContract:
-          {' ' + contractAddrs}
         </h2>
+        <h3 style={{color: 'gray', padding: '0 1em', textAlign: 'left'}}>
+          {contractAddrs}
+        </h3>
+        <br />
         <StreamComponent
           title={'1) From Player to Contract'}
           inflow={true}

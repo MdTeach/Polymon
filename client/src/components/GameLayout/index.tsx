@@ -1,8 +1,9 @@
 import GameEngine from 'engine/engine';
 import {useRef, useLayoutEffect} from 'react';
 import './style.css';
+import {loadMap, Map} from 'engine/maps/Map';
 
-const GameLayout = () => {
+const GameLayout = ({mapData}: {mapData: Map}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   let gameEngine = useRef<GameEngine | null>();
 
@@ -11,7 +12,7 @@ const GameLayout = () => {
       if (canvasRef.current !== null) {
         const ctx = canvasRef.current.getContext('2d');
         if (ctx !== null) {
-          gameEngine.current = new GameEngine(ctx);
+          gameEngine.current = new GameEngine(ctx, mapData);
           // gameEngine.current.start(false);
           gameEngine.current.start();
         }

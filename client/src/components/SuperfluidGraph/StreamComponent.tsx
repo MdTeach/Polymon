@@ -11,17 +11,17 @@ const Box = ({acc1}: {acc1: string}) => {
     <div
       style={{
         backgroundColor: '#ffffff',
-        width: '250px',
+        width: '320px',
         height: '100px',
-        borderRadius: '12px',
+        borderRadius: '18px',
         border: '4px solid #cbd0d5 ',
       }}>
       <div
         style={{
-          padding: '30px 10px',
+          padding: '42px 10px',
           color: '#9da1a5',
           fontWeight: 'bold',
-          fontSize: '22px',
+          fontSize: '16px',
         }}>
         {getAddress(acc1)}
       </div>
@@ -43,12 +43,12 @@ const App = ({
   acc2: string;
 }) => {
   return (
-    <div style={{width: '850px', backgroundColor: '#f8fafc', padding: '1em'}}>
+    <div style={{width: '1100px', backgroundColor: '#f8fafc', padding: '1em'}}>
       <div
         style={{
           color: '#9da1a5',
           fontWeight: 'bold',
-          fontSize: '22px',
+          fontSize: '18px',
           padding: '0.5em',
         }}>
         <h4 style={{textAlign: 'left'}}>{title}</h4>
@@ -58,10 +58,10 @@ const App = ({
         <div style={{flex: 3, paddingTop: '13px'}}>
           <p
             style={{
-              margin: '6px 0',
+              margin: '10px 0',
               color: '#9da1a5',
               fontWeight: 'bold',
-              fontSize: '18px',
+              fontSize: '12px',
             }}>
             {rate} tokens per second
           </p>

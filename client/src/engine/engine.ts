@@ -1,8 +1,9 @@
 import {Camera} from 'engine/camera/camera';
 import Scene from './scenes/scene';
 import AudioPlayer from './audio/AudioPlayer';
-import {getBaseScene} from './scenes/base_scene/base_scene';
+import BaseScene from './scenes/base_scene/base_scene';
 import {getBattleScene} from './scenes/battle_scene/base_battle_scene';
+import {Map} from 'engine/maps/Map';
 
 class Engine {
   ctx: CanvasRenderingContext2D;
@@ -43,8 +44,9 @@ class Engine {
       }
     },
   };
+  mapData: Map;
 
-  constructor(ctx: CanvasRenderingContext2D) {
+  constructor(ctx: CanvasRenderingContext2D, mapData: Map) {
     this.ctx = ctx;
     this.ctx.imageSmoothingEnabled = false;
     this.height = document.documentElement.clientHeight;
@@ -63,6 +65,7 @@ class Engine {
 
     // init audio player
     this.audioPlayer = new AudioPlayer();
+    this.mapData = mapData;
   }
 
   // switch between two scenes
@@ -100,7 +103,8 @@ class Engine {
     this.ctx.canvas.width = document.documentElement.clientWidth;
     this.ctx.imageSmoothingEnabled = false;
 
-    this.secene = await getBaseScene(this);
+    // this.secene = await getBaseScene(this);
+    this.secene = new BaseScene(this, this.ctx, this.mapData);
     // this.secene = await getBattleScene(this);
     await this.secene.start_scene();
 

@@ -17,9 +17,10 @@ class BaseScene extends Scene {
   baseMap: Map | undefined;
 
   // TODOS
-  // constructor(engine: Engine, ctx: CanvasRenderingContext2D) {
-  //   super(engine, ctx);
-  // }
+  constructor(engine: Engine, ctx: CanvasRenderingContext2D, baseMap: Map) {
+    super(engine);
+    this.baseMap = baseMap;
+  }
 
   // pokemon on enter grass
   async pokemon_on_enter_grass() {
@@ -68,7 +69,7 @@ class BaseScene extends Scene {
 
   async start_scene() {
     this.player = await getPlayer(this, {x: 0, y: 0}, PlayerSprite);
-    this.baseMap = await loadMap(CrystalTileSprite, CrystalTileData);
+    // this.baseMap = await loadMap(CrystalTileSprite, CrystalTileData);
 
     // music start
     if (!this.baseMap) throw new Error('Basemap not inited');
@@ -106,9 +107,4 @@ class BaseScene extends Scene {
   }
 }
 
-const getBaseScene = async (engine: Engine) => {
-  return new BaseScene(engine);
-};
-
 export default BaseScene;
-export {getBaseScene};
