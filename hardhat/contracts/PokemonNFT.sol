@@ -1,9 +1,12 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
 import "@chainlink/contracts/src/v0.7/VRFConsumerBase.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC721} from "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.2.0-solc-0.7/contracts/token/ERC721/ERC721.sol";
+import "./PokemonsConstants.sol";
 
 contract PokemonNFT is VRFConsumerBase, ERC721 {
+    string private _baseURL = "https://ipfs.io/ipfs/";
+
     // random number gen
     bytes32 internal keyHash;
     uint256 internal fee;
@@ -11,6 +14,9 @@ contract PokemonNFT is VRFConsumerBase, ERC721 {
 
     address public owner;
     uint256 public tokenCounter;
+
+    // pkm data
+    PokemonsConstants pkmData;
 
     struct PokemonData {
         uint256 nameId;
@@ -33,15 +39,41 @@ contract PokemonNFT is VRFConsumerBase, ERC721 {
     {
         owner = msg.sender;
 
+        // set base URI
+        _setBaseURI("https://ipfs.io/ipfs/");
+
+        // pkm data
+        pkmData = PokemonsConstants(0x17556Abf36FC06a955Fb4DfCa509A1E1f160F1C5);
+
         // chainlink init
         keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
         fee = 0.0001 * 10**18; // 0.0001 LINK
+
+        // initally mint the base pkms
+        MintBasePokemons();
     }
 
     // #### HANDLE MINT ####
     function MintPokemon(uint256 nameIdx) public {
         uint256 randomNum = 10;
-        uint256 pkmType = 1;
+        uint256 pkmType = pkmData.ListedTypes(nameIdx);
+
+        PokemonData memory data = genPokemon(randomNum, pkmType, nameIdx);
+        string memory _tokenURI = pkmData.MetaDatas(nameIdx);
+
+        _safeMint(owner, tokenCounter);
+        _setTokenURI(tokenCounter, _tokenURI);
+
+        PokemonsMinted[tokenCounter] = data;
+
+        tokenCounter += 1;
+    }
+
+    function genPokemon(
+        uint256 randomNum,
+        uint256 pkmType,
+        uint256 nameIdx
+    ) internal pure returns (PokemonData memory) {
         uint256 attack = 65 + (randomNum % 35);
         uint256 defence = 65 + ((randomNum + attack) % 35);
 
@@ -53,8 +85,7 @@ contract PokemonNFT is VRFConsumerBase, ERC721 {
         uint256 attack2 = 20 + ar1;
         uint256 attack3 = 20 + ar2;
 
-        _safeMint(msg.sender, tokenCounter);
-        PokemonData memory pkmData = PokemonData({
+        PokemonData memory _pkmData = PokemonData({
             nameId: nameIdx,
             randomSeed: randomNum,
             pkmType: pkmType,
@@ -62,9 +93,29 @@ contract PokemonNFT is VRFConsumerBase, ERC721 {
             defence: defence,
             moves: [attack0, attack1, attack2, attack3]
         });
-        PokemonsMinted[tokenCounter] = pkmData;
 
-        tokenCounter += 1;
+        return _pkmData;
+    }
+
+    function MintBasePokemons() private {
+        // mint all the base pkms
+        uint256 numPkms = 8;
+        uint256 seed = 2;
+
+        // loop through all and mint it
+        for (uint256 i = 0; i < numPkms; i++) {
+            uint256 nameIdx = i;
+            uint256 pkmType = pkmData.ListedTypes(nameIdx);
+
+            PokemonData memory data = genPokemon(seed, pkmType, nameIdx);
+            string memory _tokenURI = pkmData.MetaDatas(nameIdx);
+
+            _safeMint(msg.sender, tokenCounter);
+            _setTokenURI(tokenCounter, _tokenURI);
+
+            PokemonsMinted[tokenCounter] = data;
+            tokenCounter += 1;
+        }
     }
 
     // ########## VRF Code ###################

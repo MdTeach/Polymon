@@ -4,25 +4,36 @@ pragma experimental ABIEncoderV2;
 
 contract PokemonsConstants {
     // Names of pokemon to be minted
-    string[8] ListedPokemon = [
-        "EPkm1",
-        "EPkm2",
-        "WPkm1",
-        "WPkm2",
-        "FPkm1",
-        "FPkm2",
-        "GPkm1",
-        "GPkm2"
+    string[8] public ListedPokemon = [
+        "Pikachu",
+        "Zapdos",
+        "Blastoise",
+        "Feraligatr",
+        "Charizard",
+        "Typhlosion",
+        "Ivysaur",
+        "Meganium"
+    ];
+
+    string[8] public MetaDatas = [
+        "bafyreicsuhjalye73rtjxny35bshhzueyl5hxweanx4fz7dnuw5cdujnqy/metadata.json", //Pika
+        "bafyreif2xactzw2svnapfuzu54uurz2fj3oyu5hpopnihxypsniss2wo4a/metadata.json", //Zapdos
+        "bafyreib3kytnlyl4ozklhg3ysjczd6cgqpmwyl4soj3wrzlm3ytd2qheeq/metadata.json", //Blast
+        "bafyreifkomjhydcqkhb6slgi6y4rrtukzhqjy3qen3zuxvij66tzwlnc4e/metadata.json", //Fara
+        "bafyreienrtlhwld3rvfv4hr765wd4xcb3u7nxvur3t2ccv2zp2wgpuqb5i/metadata.json", //Chali
+        "bafyreidcnqbr6onagazfoloaagsaqz4olukznbrq2bcmeqwushuzt4n2oa/metadata.json", //Typo
+        "bafyreiezh6bsvcfyicf4q5njqeogxniq4ut7rut2zperdpbdsahvgiybta/metadata.json", //g
+        "bafyreidjcr26ppljuhhb7dqvcpv7oka2jon2v4ustj2gsgmanwm5dtatge/metadata.json" //gg
     ];
 
     // Types of listed pkm
-    uint256[8] ListedTypes = [0, 0, 1, 1, 2, 2, 3, 3];
+    uint256[8] public ListedTypes = [0, 0, 1, 1, 2, 2, 3, 3];
 
     // supported elemental types
-    string[5] ElTypes = ["electric", "water", "fire", "grass", "normal"];
+    string[5] public ElTypes = ["electric", "water", "fire", "grass", "normal"];
 
     // effectiveness of one attack over another
-    uint256[5][5] AttackMap = [
+    uint256[5][5] public AttackMap = [
         [10, 15, 12, 8, 10],
         [8, 10, 15, 8, 10],
         [11, 8, 10, 15, 11],
@@ -37,7 +48,7 @@ contract PokemonsConstants {
         uint256 hit;
     }
 
-    attack[25] attacks;
+    attack[25] public attacks;
 
     constructor() {
         // Electric Attacks

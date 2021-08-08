@@ -32,7 +32,7 @@ async function storeMeta(folderName, name, type) {
 // storeMeta("blastoise", "Blastoise", "Water");
 // storeMeta("feraligatr", "Feraligatr", "Water");
 // storeMeta("charizard", "Charizard", "Fire");
-// storeMeta("typhlosion", "Typhlosion", "Fire");
+storeMeta("typhlosion", "Typhlosion", "Fire");
 // storeMeta("ivysaur", "Ivysaur", "Grass");
 // storeMeta("meganium", "Meganium", "Grass");
 console.log("working...");
