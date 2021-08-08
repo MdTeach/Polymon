@@ -73,7 +73,7 @@ class BaseScene extends Scene {
 
     // music start
     if (!this.baseMap) throw new Error('Basemap not inited');
-    this.engine.audioPlayer.play(this.baseMap?.tileData.music);
+    // this.engine.audioPlayer.play(this.baseMap?.tileData.music);
 
     this.camera = new Camera(
       this.engine.ctx,

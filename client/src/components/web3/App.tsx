@@ -28,7 +28,7 @@ const sf = new SuperfluidSDK.Framework({
 });
 const crypt = new Crypt(web3);
 
-const randomNum = 8104;
+const randomNum = 796;
 const puzzleChar = 'f';
 
 function App() {
@@ -40,7 +40,7 @@ function App() {
   const flowRate = 57870370370370; //150 permonth
   const ctr = useRef(0);
   const id = useRef<any>(null);
-  const receipt = '0x5A6C83E613B36a045b59139A48dc177B5B3fc657';
+  const receipt = '0x81d9A25c18b4A0e92423162AbE4a3740d6AeA10d';
   const handleFlow = async () => {
     await user.flow({
       recipient: receipt,

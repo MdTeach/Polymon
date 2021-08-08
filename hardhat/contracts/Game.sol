@@ -11,6 +11,12 @@ contract Game is VRFConsumerBase {
     HashCheck public hashCheck;
     TradeableCashflow private cashFlow;
 
+    // map NFT
+    PokeMap mapNFT;
+
+    // pokemon NFT
+    PokemonNFT pkmNFT;
+
     // random number gen
     bytes32 internal keyHash;
     uint256 internal fee;
@@ -19,13 +25,16 @@ contract Game is VRFConsumerBase {
     // events
     event NumberGenerated(address player, uint256 number);
 
-    constructor()
+    constructor(PokeMap _mapNFT)
         VRFConsumerBase(
             // Matic Test Net
             0x8C7382F9D8f56b33781fE506E897a4F1e2d17255, // VRF Coordinator
             0x326C977E6efc84E512bB9C30f76E30c160eD06FB // LINK Token
         )
     {
+        // MAP NFT
+        mapNFT = _mapNFT;
+
         // super fluid CashFlow
         cashFlow = TradeableCashflow(
             0x5A6C83E613B36a045b59139A48dc177B5B3fc657
@@ -38,13 +47,28 @@ contract Game is VRFConsumerBase {
         fee = 0.0001 * 10**18; // 0.1 LINK
     }
 
+    function setPkmNFT(address _nftAddrss) public {
+        pkmNFT = PokemonNFT(_nftAddrss);
+    }
+
     mapping(address => bytes32) users2id;
     mapping(bytes32 => address) id2users;
     mapping(bytes32 => uint256) id2num;
 
     // ##### Super Flild Query #######
-    function getUserTotalToken(address _player) public view returns (uint256) {
-        return cashFlow.TotalTokensTransfered(_player);
+    function getUserTotalToken(address _player, uint256 mapToken)
+        public
+        view
+        returns (uint256)
+    {
+        address cfa = getCFA(mapToken);
+        TradeableCashflow _cf = TradeableCashflow(cfa);
+        return _cf.TotalTokensTransfered(_player);
+    }
+
+    function getCFA(uint256 tokenId) public view returns (address) {
+        address _cashFlow = mapNFT.CashFlows(tokenId);
+        return _cashFlow;
     }
 
     // ####### Game Logic ##########
@@ -54,11 +78,15 @@ contract Game is VRFConsumerBase {
         id2users[reqId] = msg.sender;
     }
 
-    function requestPkmCatch(uint256 selectedToken) public view returns (bool) {
+    function requestPkmCatch(
+        uint256 selectedToken,
+        uint256 mapToken,
+        uint256 pokemonToken
+    ) public returns (bool) {
         address _player = msg.sender;
 
         // Get streamflow info from the sf
-        uint256 token = getUserTotalToken(_player);
+        uint256 token = getUserTotalToken(_player, mapToken);
         uint256 userNum = id2num[users2id[_player]];
 
         // token valid
@@ -71,7 +99,22 @@ contract Game is VRFConsumerBase {
 
         // Check hash
         bool isValid = hashCheck.validate(selectedToken, userNum);
-        return isValid;
+
+        // give the user pokemon
+        if (isValid) {
+            sendPokemon(_player, pokemonToken, mapToken);
+            return true;
+        }
+        return false;
+    }
+
+    // Call for nft for transfer
+    function sendPokemon(
+        address receiver,
+        uint256 token,
+        uint256 map
+    ) internal {
+        pkmNFT.RequestGameTransfer(token, map, receiver);
     }
 
     function myNumber() public view returns (uint256) {

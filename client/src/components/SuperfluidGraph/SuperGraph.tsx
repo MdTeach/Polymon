@@ -5,7 +5,7 @@ import Loading from 'components/helpers/loading';
 import Alert from '@material-ui/lab/Alert';
 import {useState} from 'react';
 
-let contractAddrs = '0xD52380cfC9B44Cd6207D6191f392de635760DE1E';
+let contractAddrs = '0x81d9A25c18b4A0e92423162AbE4a3740d6AeA10d';
 contractAddrs = contractAddrs.toLowerCase();
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);

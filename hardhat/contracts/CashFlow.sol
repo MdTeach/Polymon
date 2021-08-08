@@ -4,6 +4,12 @@ pragma experimental ABIEncoderV2;
 
 import {RedirectAll, ISuperToken, IConstantFlowAgreementV1, ISuperfluid} from "./RedirectAll.sol";
 
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.7.0;
+pragma experimental ABIEncoderV2;
+
+import {RedirectAll, ISuperToken, IConstantFlowAgreementV1, ISuperfluid} from "./RedirectAll.sol";
+
 contract TradeableCashflow is RedirectAll {
     // 0x8db7C7ed6403e26445843855D86834014500D4D7
     // Host:0xEB796bdb90fFA0f28255275e16936D25d3418603

@@ -7,10 +7,22 @@ import "./PokemonsConstants.sol";
 contract PokemonNFT is VRFConsumerBase, ERC721 {
     string private _baseURL = "https://ipfs.io/ipfs/";
 
+    // admin game address
+    address gameAddress;
+
+    //initial minted flag
+    bool initalMinted;
+    bool isRandomNumGenerated;
+    uint256 initalSeed;
+
+    // Pokemons Maps info
+    mapping(uint256 => uint256) PokemonToMap;
+    mapping(address => uint256) MapUploadRecord;
+
     // random number gen
     bytes32 internal keyHash;
     uint256 internal fee;
-    uint256 public randomResult;
+    uint256 private randomResult;
 
     address public owner;
     uint256 public tokenCounter;
@@ -44,31 +56,31 @@ contract PokemonNFT is VRFConsumerBase, ERC721 {
 
         // pkm data
         pkmData = PokemonsConstants(0x17556Abf36FC06a955Fb4DfCa509A1E1f160F1C5);
-
+        gameAddress = 0xBB1AE12EeaE89F1A8915aa4Afc3b117c31d69807;
         // chainlink init
         keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
         fee = 0.0001 * 10**18; // 0.0001 LINK
+    }
 
-        // initally mint the base pkms
-        MintBasePokemons();
+    // ##### Put Pokemon on Map #########
+    function PutOnMap(uint256 token, uint256 mapId) public {
+        _transfer(msg.sender, gameAddress, token);
+        PokemonToMap[token] = mapId;
+        MapUploadRecord[msg.sender] = token;
+    }
+
+    function RequestGameTransfer(
+        uint256 token,
+        uint256 mapId,
+        address rec
+    ) external {
+        require(msg.sender == gameAddress, "Ony game contract can call this");
+        require(PokemonToMap[token] == mapId);
+
+        _transfer(gameAddress, rec, token);
     }
 
     // #### HANDLE MINT ####
-    function MintPokemon(uint256 nameIdx) public {
-        uint256 randomNum = 10;
-        uint256 pkmType = pkmData.ListedTypes(nameIdx);
-
-        PokemonData memory data = genPokemon(randomNum, pkmType, nameIdx);
-        string memory _tokenURI = pkmData.MetaDatas(nameIdx);
-
-        _safeMint(owner, tokenCounter);
-        _setTokenURI(tokenCounter, _tokenURI);
-
-        PokemonsMinted[tokenCounter] = data;
-
-        tokenCounter += 1;
-    }
-
     function genPokemon(
         uint256 randomNum,
         uint256 pkmType,
@@ -97,10 +109,19 @@ contract PokemonNFT is VRFConsumerBase, ERC721 {
         return _pkmData;
     }
 
-    function MintBasePokemons() private {
+    function handleInitialMint() public {
+        require(msg.sender == owner, "Only owner");
+        require(initalMinted == false, "Already minted");
+        require(isRandomNumGenerated, "Request random number first");
+
+        // initally mint the base pkms
+        MintBasePokemons(randomResult);
+    }
+
+    function MintBasePokemons(uint256 seed) internal {
         // mint all the base pkms
         uint256 numPkms = 8;
-        uint256 seed = 2;
+        seed += numPkms * 13;
 
         // loop through all and mint it
         for (uint256 i = 0; i < numPkms; i++) {
@@ -127,11 +148,9 @@ contract PokemonNFT is VRFConsumerBase, ERC721 {
         return requestRandomness(keyHash, fee);
     }
 
-    function fulfillRandomness(bytes32 requestId, uint256 randomness)
-        internal
-        override
-    {
-        uint256 number = randomness % 10000;
+    function fulfillRandomness(bytes32, uint256 randomness) internal override {
+        uint256 number = randomness % 1000000;
         randomResult = number;
+        isRandomNumGenerated = true;
     }
 }

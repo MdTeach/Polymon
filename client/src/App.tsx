@@ -42,15 +42,17 @@ function App() {
             <Route exact path="/newMap">
               <BuildMapLayout />
             </Route>
-            <Route exact path="/">
+            <Route exact path="/home">
               <Home />
             </Route>
             <Route exact path="/graph">
               <SuperGraph />
             </Route>
+            <Route exact path="/">
+              <Web3 />
+            </Route>
           </Switch>
           {/* <Game /> */}
-          {/* <Web3 /> */}
         </Web3Context.Provider>
       </div>
     </BrowserRouter>
