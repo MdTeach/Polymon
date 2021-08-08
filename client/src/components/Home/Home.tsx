@@ -11,7 +11,7 @@ import Game from 'components/GameLayout/';
 
 const data = {};
 const MAPS = [
-  'https://ipfs.io/ipfs/QmfSR3M7o2dpoAcws5JumFAcMiWRZn9vFsR1ZydMhGeVB3',
+  'https://ipfs.io/ipfs/QmYQiqDSXW4oztQyN8f6g4EKJF61r2e8Kyg4AVvtpypJF6',
 ];
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);

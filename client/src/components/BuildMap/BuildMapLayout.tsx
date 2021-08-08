@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import {useState, useRef} from 'react';
 import {uploadToIPFS} from 'ipfs/ipfs_upload';
-import './BuildMap.css';
 
 export default function LayoutTextFields() {
   const [name, setName] = useState('');
@@ -58,18 +57,16 @@ export default function LayoutTextFields() {
     // upload the image
     console.log('File check completed, uploading...');
     const image: File = selectedImage.current;
-    const audio: File = selectedAudio.current;
     const img64 = await toBase64(image);
-    const audio64 = await toBase64(audio);
 
     var [imgPath, err] = await uploadToIPFS(img64);
     if (err) throw new Error('Tile Upload Failed');
     console.log('Img Uploaded');
 
     // upload the audio
-    var [audioPath, err] = await uploadToIPFS(audio64);
+    var [audioPath, err] = await uploadToIPFS(selectedAudio.current);
     if (err) throw new Error('Tile Upload Failed');
-    console.log('Music Uploaded');
+    console.log('Music Uploaded', audioPath);
 
     // get the json data
     const stringMap: any = await readUploadedFileAsText(selectedFile.current);
@@ -77,7 +74,9 @@ export default function LayoutTextFields() {
     // add audio info to the json
     jsonMap['music'] = ipfsURI + audioPath;
     // upload the jsonMap
-    var [mapPath, err] = await uploadToIPFS(JSON.stringify(jsonMap));
+    var [mapPath, uploadToIPFSerr] = await uploadToIPFS(
+      JSON.stringify(jsonMap),
+    );
     if (err) throw new Error('Tile Upload Failed');
     console.log('Map Uploaded');
 
@@ -97,18 +96,24 @@ export default function LayoutTextFields() {
   };
 
   return (
-    <div className="container">
+    <div
+      style={{
+        // width: '60%',
+        padding: '1em',
+        marginLeft: '1%',
+      }}>
       <div>
         <Breadcrumbs aria-label="breadcrumb">
           <h1>Enter the Map NFT Detail here</h1>
         </Breadcrumbs>
         <Breadcrumbs>
-          <h3>*Income will be shared between the creators</h3>
-          <h4>Map Owner 60%</h4>
-          <h4>Graphics Owner 20%</h4>
-          <h4>Music Owner 20%</h4>
+          <h4>*Income will be shared between the creators</h4>
+          <h5>Map Owner 60%</h5>
+          <h5>Graphics Owner 20%</h5>
+          <h5>Music Owner 20%</h5>
         </Breadcrumbs>
         <TextField
+          style={{width: '60%'}}
           id="filled-full-width"
           label="Map Name"
           placeholder="Enter the map name"
@@ -124,6 +129,7 @@ export default function LayoutTextFields() {
           variant="filled"
         />
         <TextField
+          style={{width: '60%'}}
           id="filled-full-width"
           label="Map Owner"
           placeholder="Enter Map Owner Address"
@@ -139,6 +145,7 @@ export default function LayoutTextFields() {
           variant="filled"
         />
         <TextField
+          style={{width: '60%'}}
           id="filled-full-width"
           label="Graphics Owner"
           placeholder="Enter Graphics Owner Address"
@@ -155,6 +162,7 @@ export default function LayoutTextFields() {
           variant="filled"
         />
         <TextField
+          style={{width: '60%'}}
           id="filled-full-width"
           label="Music Owner"
           placeholder="Enter Music Owner Address"
@@ -171,8 +179,13 @@ export default function LayoutTextFields() {
           variant="filled"
         />
 
-        <div className="uploadFile">
-          <h3>Enter Tile Source Image(png file)</h3>
+        <div
+          style={{
+            textAlign: 'left',
+            color: '#96969a',
+            margin: '16px 0',
+          }}>
+          <h4>Enter Tile Source Image(png file)</h4>
           <input
             type="file"
             value={selectedImage.current}
@@ -182,8 +195,13 @@ export default function LayoutTextFields() {
             }}
           />
         </div>
-        <div className="uploadFile">
-          <h3>Enter Music File(.mp3)</h3>
+        <div
+          style={{
+            textAlign: 'left',
+            color: '#96969a',
+            margin: '16px 0',
+          }}>
+          <h4>Enter Music File(.mp3)</h4>
           <input
             type="file"
             value={selectedAudio.current}
@@ -193,8 +211,13 @@ export default function LayoutTextFields() {
             }}
           />
         </div>
-        <div className="uploadFile">
-          <h3>Enter TileMap data(json file)</h3>
+        <div
+          style={{
+            textAlign: 'left',
+            color: '#96969a',
+            margin: '16px 0',
+          }}>
+          <h4>Enter TileMap data(json file)</h4>
           <input
             type="file"
             value={selectedFile.current}
