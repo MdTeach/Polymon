@@ -41,20 +41,33 @@ export default function LayoutTextFields() {
     }
   };
 
+  const toBase64 = (file: File) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
   const handleUpload = async () => {
     const ipfsURI = 'https://ipfs.io/ipfs/';
     if (!selectedImage.current) throw new Error('data not complete');
     if (!selectedFile.current) throw new Error('data not complete');
     if (!selectedAudio.current) throw new Error('data not complete');
-    console.log('File check completed, uploading...');
 
     // upload the image
-    var [imgPath, err] = await uploadToIPFS(selectedImage.current);
+    console.log('File check completed, uploading...');
+    const image: File = selectedImage.current;
+    const audio: File = selectedAudio.current;
+    const img64 = await toBase64(image);
+    const audio64 = await toBase64(audio);
+
+    var [imgPath, err] = await uploadToIPFS(img64);
     if (err) throw new Error('Tile Upload Failed');
     console.log('Img Uploaded');
 
     // upload the audio
-    var [audioPath, err] = await uploadToIPFS(selectedAudio.current);
+    var [audioPath, err] = await uploadToIPFS(audio64);
     if (err) throw new Error('Tile Upload Failed');
     console.log('Music Uploaded');
 

@@ -100,8 +100,8 @@ class Engine {
     this.ctx.canvas.width = document.documentElement.clientWidth;
     this.ctx.imageSmoothingEnabled = false;
 
-    // this.secene = await getBaseScene(this);
-    this.secene = await getBattleScene(this);
+    this.secene = await getBaseScene(this);
+    // this.secene = await getBattleScene(this);
     await this.secene.start_scene();
 
     if (loop) this.update();

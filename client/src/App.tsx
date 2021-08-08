@@ -2,6 +2,7 @@ import Game from 'components/GameLayout/';
 import Web3 from 'components/web3/App';
 import BuildMapLayout from 'components/BuildMap/BuildMapLayout';
 import SuperGraph from 'components/SuperfluidGraph/SuperGraph';
+import Home from 'components/Home/Home';
 
 import useWeb3 from 'hooks/web3';
 import Web3Context from './contexts/Web3Context';
@@ -35,9 +36,10 @@ function App() {
           account,
         }}>
         {/* <BuildMapLayout /> */}
-        <Game />
+        {/* <Game /> */}
         {/* <Web3 /> */}
         {/* <SuperGraph /> */}
+        <Home />
       </Web3Context.Provider>
     </div>
   );
