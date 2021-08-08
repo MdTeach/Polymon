@@ -74,8 +74,8 @@ class BaseBattleScene extends Scene {
 
   async getPokemon() {
     const pikajuInfo: PokemonInfo = {
-      tsize: 16,
       spriteSrc: PikajuImage,
+      tsize: 16,
       enemyFacingTile: [14.8, 0.5],
       enemyFacingSize: [3, 3],
       userFacingPos: [0, 1],

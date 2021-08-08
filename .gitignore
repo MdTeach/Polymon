@@ -3,3 +3,4 @@ contracts_deployed
 artifacts
 cache
 secrets.json
+nft_storage/secrect.json
