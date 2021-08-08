@@ -1,0 +1,10 @@
+{
+    "tsize": 16,
+    "enemyFacingTile": [18.8, 0.8],
+    "enemyFacingSize": [3, 3],
+    "userFacingPos": [0, 0],
+    "noAnimations": 4,
+    "width": 3.4,
+    "height": 3.7,
+    "tileOffsets": [0, 0]
+}

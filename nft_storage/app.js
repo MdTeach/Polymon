@@ -1,8 +1,8 @@
-https://ipfs.io/ipfs/bafyreicsuhjalye73rtjxny35bshhzueyl5hxweanx4fz7dnuw5cdujnqy/metadata.json
+// https://ipfs.io/ipfs/bafyreicsuhjalye73rtjxny35bshhzueyl5hxweanx4fz7dnuw5cdujnqy/metadata.json
 
 const { NFTStorage, File } = require("nft.storage");
 const fs = require("fs");
-const {apiKey} = require('./secrect.json');
+const { apiKey } = require("./secrect.json");
 const client = new NFTStorage({ token: apiKey });
 
 async function storeMeta(folderName, name, type) {
@@ -22,9 +22,17 @@ async function storeMeta(folderName, name, type) {
   });
 
   console.log("IPFS URL for the metadata:", metadata.url);
-  console.log("metadata.json contents:\n", metadata.data);
-  console.log("metadata.json with IPFS gateway URLs:\n", metadata.embed());
+  // console.log("metadata.json contents:\n", metadata.data);
+  // console.log("metadata.json with IPFS gateway URLs:\n", metadata.embed());
 }
 
-storeMeta("pikaju", "Pikaju", "Electric");
-console.log("all good");
+// Uncommnet to add here
+// storeMeta("pikaju", "Pikaju", "Electric");
+// storeMeta("zapdos", "Zapdos", "Electric");
+// storeMeta("blastoise", "Blastoise", "Water");
+// storeMeta("feraligatr", "Feraligatr", "Water");
+// storeMeta("charizard", "Charizard", "Fire");
+// storeMeta("typhlosion", "Typhlosion", "Fire");
+// storeMeta("ivysaur", "Ivysaur", "Grass");
+// storeMeta("meganium", "Meganium", "Grass");
+console.log("working...");
