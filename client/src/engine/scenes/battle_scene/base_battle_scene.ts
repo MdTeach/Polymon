@@ -75,7 +75,7 @@ class BaseBattleScene extends Scene {
   async getPokemon() {
     // const
     // const pkmName = 'pikaju';
-    const pkmName = 'blastoise';
+    const pkmName = 'meganium';
     const _spriteData = loadSpriteData(pkmName);
     const _pkmImage = getPkmImage(pkmName);
     const _characterData = await getCharacterData();

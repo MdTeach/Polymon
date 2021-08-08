@@ -65,6 +65,36 @@ const spriteDatas: SpriteDatas = {
     height: 3.7,
     tileOffsets: [0, 0],
   },
+  feraligatr: {
+    tsize: 16,
+    enemyFacingTile: [18.3, 0.6],
+    enemyFacingSize: [3, 3],
+    userFacingPos: [0, 1],
+    noAnimations: 4,
+    width: 3.6,
+    height: 3.6,
+    tileOffsets: [0.2, -1],
+  },
+  ivysaur: {
+    tsize: 16,
+    enemyFacingTile: [11, -0.2],
+    enemyFacingSize: [3, 3],
+    userFacingPos: [0, 1],
+    noAnimations: 4,
+    width: 2.7,
+    height: 2.8,
+    tileOffsets: [0.2, -1],
+  },
+  meganium: {
+    tsize: 16,
+    enemyFacingTile: [18, 0.6],
+    enemyFacingSize: [3, 3],
+    userFacingPos: [3.65, 1],
+    noAnimations: 5,
+    width: 3.5,
+    height: 3.6,
+    tileOffsets: [0, -1],
+  },
 };
 
 interface PkmImages {
